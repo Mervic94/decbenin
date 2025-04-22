@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, Package, LogOut } from "lucide-react";
+import { User, Package, LogOut, FileText, Home } from "lucide-react";
 
 export const Navbar = () => {
   const { user, profile, userRole, logout, isAuthenticated } = useAuth();
@@ -35,6 +35,19 @@ export const Navbar = () => {
           <Link to="/services" className="hover:text-secondary-foreground transition">
             Services
           </Link>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="hover:text-secondary-foreground transition">Ressources</DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => navigate("/checklist-demenagement")}>
+                <FileText className="mr-2 h-4 w-4" />
+                <span>Checklist de déménagement</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/organiser-demenagement")}>
+                <Home className="mr-2 h-4 w-4" />
+                <span>Organiser son déménagement</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <Link to="/contact" className="hover:text-secondary-foreground transition">
             Contact
           </Link>

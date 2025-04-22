@@ -2,7 +2,7 @@
 import { Layout, PageContainer } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Truck, Calendar, Package, User, Check } from "lucide-react";
+import { Truck, Calendar, Package, User, Check, FileText, Home } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -74,8 +74,41 @@ const Index = () => {
         </PageContainer>
       </section>
 
+      {/* Resources */}
+      <section className="py-16 bg-white">
+        <PageContainer>
+          <h2 className="text-3xl font-bold text-center mb-12">Ressources pour votre déménagement</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col items-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <FileText className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Checklist de déménagement</h3>
+              <p className="text-gray-600 text-center mb-6">
+                Ne rien oublier lors de votre déménagement grâce à notre checklist complète.
+              </p>
+              <Button onClick={() => navigate("/checklist-demenagement")}>
+                Voir la checklist
+              </Button>
+            </div>
+            <div className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col items-center">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Home className="h-8 w-8 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Organiser son déménagement</h3>
+              <p className="text-gray-600 text-center mb-6">
+                Conseils et astuces pour organiser et planifier votre déménagement efficacement.
+              </p>
+              <Button onClick={() => navigate("/organiser-demenagement")}>
+                Découvrir les conseils
+              </Button>
+            </div>
+          </div>
+        </PageContainer>
+      </section>
+
       {/* Services */}
-      <section className="py-16">
+      <section className="py-16 bg-gray-50">
         <PageContainer>
           <h2 className="text-3xl font-bold text-center mb-12">Nos Services</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

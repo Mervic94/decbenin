@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -62,10 +63,10 @@ export default {
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
 				},
-				// Custom colors for Déménagement Express Cotonou
+				// Custom colors for Déménagement Express Cotonou - Updated to red theme
 				demenagement: {
-					blue: '#0057b7',
-					darkBlue: '#003a7a',
+					red: '#c0392b',
+					darkRed: '#8c291f',
 					orange: '#FF6B00',
 					lightOrange: '#FF8A3D',
 					gray: '#F3F4F6',
