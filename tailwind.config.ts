@@ -61,6 +61,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Custom colors for Déménagement Express Cotonou
+				demenagement: {
+					blue: '#0057b7',
+					darkBlue: '#003a7a',
+					orange: '#FF6B00',
+					lightOrange: '#FF8A3D',
+					gray: '#F3F4F6',
+					darkGray: '#6B7280'
 				}
 			},
 			borderRadius: {
