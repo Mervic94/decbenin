@@ -13,7 +13,7 @@ import {
 import { User, Package, LogOut } from "lucide-react";
 
 export const Navbar = () => {
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, profile, userRole, logout, isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -50,13 +50,15 @@ export const Navbar = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuLabel>Mon compte</DropdownMenuLabel>
-                <DropdownMenuLabel>{user?.name}</DropdownMenuLabel>
+                <DropdownMenuLabel>
+                  {profile?.full_name || "Utilisateur"}
+                </DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => navigate("/dashboard")}>
                   <User className="mr-2 h-4 w-4" />
                   <span>Tableau de bord</span>
                 </DropdownMenuItem>
-                {user?.role === "agent" && (
+                {userRole === "agent" && (
                   <DropdownMenuItem onClick={() => navigate("/agent")}>
                     <Package className="mr-2 h-4 w-4" />
                     <span>Espace Agent</span>

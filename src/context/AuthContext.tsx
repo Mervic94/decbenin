@@ -7,6 +7,7 @@ import { Profile, UserRole } from '@/types';
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
+  userRole: UserRole | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<boolean>;
   loginWithGoogle: () => Promise<boolean>;
@@ -22,33 +23,57 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
+  const [userRole, setUserRole] = useState<UserRole | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch user profile from supabase table
+  const fetchUserProfile = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .maybeSingle();
+    if (data) setProfile(data);
+    else setProfile(null);
+  };
+
+  // Fetch role
+  const fetchUserRole = async (userId: string) => {
+    const { data, error } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (data && data.role) setUserRole(data.role as UserRole);
+    else setUserRole(null);
+  };
+
   useEffect(() => {
-    const fetchUserProfile = async (userId: string) => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-
-      if (data) setProfile(data);
-    };
-
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
         setUser(session?.user ?? null);
         setIsLoading(false);
-
         if (session?.user) {
-          await fetchUserProfile(session.user.id);
+          fetchUserProfile(session.user.id);
+          fetchUserRole(session.user.id);
+        } else {
+          setProfile(null);
+          setUserRole(null);
         }
       }
     );
 
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
+    // Check for existing session on mount
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        fetchUserProfile(session.user.id);
+        fetchUserRole(session.user.id);
+      }
+      setIsLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string): Promise<boolean> => {
@@ -58,6 +83,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       password
     });
 
+    if (data?.user) {
+      await fetchUserProfile(data.user.id);
+      await fetchUserRole(data.user.id);
+    }
     setIsLoading(false);
     return !error;
   };
@@ -67,7 +96,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google'
     });
-
     setIsLoading(false);
     return !error;
   };
@@ -84,6 +112,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     });
 
+    if (data?.user) {
+      await fetchUserProfile(data.user.id);
+      await fetchUserRole(data.user.id);
+    }
     setIsLoading(false);
     return !error;
   };
@@ -92,6 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     supabase.auth.signOut();
     setUser(null);
     setProfile(null);
+    setUserRole(null);
   };
 
   return (
@@ -99,6 +132,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       value={{
         user,
         profile,
+        userRole,
         isLoading,
         login,
         loginWithGoogle,
