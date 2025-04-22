@@ -13,7 +13,6 @@ export const Footer = () => {
               Service professionnel, rapide et sécurisé.
             </p>
           </div>
-
           <div>
             <h3 className="text-xl font-bold mb-4">Nos Services</h3>
             <ul className="space-y-2">
@@ -39,17 +38,15 @@ export const Footer = () => {
               </li>
             </ul>
           </div>
-
           <div>
             <h3 className="text-xl font-bold mb-4">Contact</h3>
             <ul className="space-y-2">
               <li>123 Rue Principale, Cotonou, Bénin</li>
-              <li>Téléphone: +229 00 00 00 00</li>
-              <li>Email: contact@demenagement-express-cotonou.com</li>
+              <li>Téléphone: +229 01 663 555 09</li>
+              <li>Email: demenagementexpresscotonou@gmail.com</li>
             </ul>
           </div>
         </div>
-
         <div className="border-t border-slate-700 mt-8 pt-4 text-center">
           <p>
             &copy; {new Date().getFullYear()} Déménagement Express Cotonou. Tous droits réservés.
