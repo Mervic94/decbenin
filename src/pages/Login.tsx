@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Layout, PageContainer } from "@/components/Layout";
 import { useNavigate, Link } from "react-router-dom";
@@ -15,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { PasswordInput } from "@/components/PasswordInput";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -65,7 +65,6 @@ const Login = () => {
     }
   };
 
-  // Pour la démonstration, afficher les identifiants des utilisateurs disponibles
   const demoAccounts = [
     { type: "Client", email: "user@example.com", password: "password" },
     { type: "Agent", email: "agent@example.com", password: "password" },
@@ -104,9 +103,8 @@ const Login = () => {
                       Mot de passe oublié?
                     </Link>
                   </div>
-                  <Input
+                  <PasswordInput
                     id="password"
-                    type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
@@ -130,7 +128,6 @@ const Login = () => {
           </Card>
         </div>
 
-        {/* Demo accounts info - only for demonstration */}
         <div className="max-w-md mx-auto mt-8 p-4 border border-dashed border-gray-300 rounded-md">
           <h3 className="font-medium text-lg mb-2">Comptes de démonstration</h3>
           <p className="text-sm text-muted-foreground mb-4">

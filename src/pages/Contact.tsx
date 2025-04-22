@@ -1,4 +1,3 @@
-
 import { Layout, PageContainer } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,18 +7,21 @@ import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
 
+const CONTACT_PHONE = "+229 01 663 555 09";
+const CONTACT_MAIL = "demenagementexpresscotonou@gmail.com";
+
 const Contact = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
   const { toast } = useToast();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!name || !email || !message) {
       toast({
         title: "Erreur",
@@ -28,16 +30,16 @@ const Contact = () => {
       });
       return;
     }
-    
+
     setIsSubmitting(true);
-    
+
     // Simulate form submission
     setTimeout(() => {
       toast({
         title: "Message envoyé",
         description: "Nous vous répondrons dans les plus brefs délais",
       });
-      
+
       // Reset form
       setName("");
       setEmail("");
@@ -63,8 +65,8 @@ const Contact = () => {
               </div>
               <h3 className="text-lg font-bold mb-2">Téléphone</h3>
               <p className="text-muted-foreground mb-2">Appelez-nous pour un service rapide</p>
-              <a href="tel:+22900000000" className="text-primary font-medium">
-                +229 00 00 00 00
+              <a href={`tel:${CONTACT_PHONE.replace(/\s+/g, '')}`} className="text-primary font-medium">
+                {CONTACT_PHONE}
               </a>
             </div>
 
@@ -74,8 +76,8 @@ const Contact = () => {
               </div>
               <h3 className="text-lg font-bold mb-2">Email</h3>
               <p className="text-muted-foreground mb-2">Écrivez-nous pour toute question</p>
-              <a href="mailto:contact@demenagement-express-cotonou.com" className="text-primary font-medium">
-                contact@demenagement-express-cotonou.com
+              <a href={`mailto:${CONTACT_MAIL}`} className="text-primary font-medium">
+                {CONTACT_MAIL}
               </a>
             </div>
 
