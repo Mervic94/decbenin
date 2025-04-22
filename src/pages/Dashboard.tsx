@@ -21,7 +21,7 @@ import { Separator } from "@/components/ui/separator";
 import { MoveRequest } from "@/types";
 
 const Dashboard = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, profile } = useAuth();
   const { getUserRequests } = useRequests();
   const navigate = useNavigate();
 
@@ -58,7 +58,7 @@ const Dashboard = () => {
               Déménagement du {format(new Date(request.moveDate), "d MMMM yyyy", { locale: fr })}
             </CardTitle>
             <CardDescription>
-              Demande créée le {format(new Date(request.createdAt), "d MMMM yyyy", { locale: fr })}
+              Demande créée le {format(new Date(request.created_at || ""), "d MMMM yyyy", { locale: fr })}
             </CardDescription>
           </div>
           {getStatusBadge(request.status)}
@@ -133,7 +133,7 @@ const Dashboard = () => {
             <div>
               <h1 className="text-3xl font-bold">Tableau de bord</h1>
               <p className="text-muted-foreground">
-                Bienvenue, {user.name}
+                Bienvenue, {profile?.full_name || "Utilisateur"}
               </p>
             </div>
             <Button onClick={() => navigate("/quote")}>

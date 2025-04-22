@@ -39,7 +39,7 @@ import { MoveRequest } from "@/types";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const AgentDashboard = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, profile } = useAuth();
   const { requests, getPendingRequests, updateRequestStatus } = useRequests();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -83,9 +83,10 @@ const AgentDashboard = () => {
 
     setIsSubmitting(true);
     try {
+      const status = pendingAction === "approve" ? "approved" : "declined";
       const success = await updateRequestStatus(
         selectedRequest.id,
-        pendingAction === "approve" ? "approved" : "declined"
+        status
       );
 
       if (success) {
@@ -140,7 +141,7 @@ const AgentDashboard = () => {
             </CardTitle>
             <CardDescription className="flex items-center gap-2">
               <UserIcon className="h-3 w-3" />
-              Client #{request.userId}
+              Client #{request.user_id}
             </CardDescription>
           </div>
           {getStatusBadge(request.status)}
@@ -210,7 +211,7 @@ const AgentDashboard = () => {
               <div>
                 <h3 className="text-sm font-medium text-muted-foreground mb-1">Date de création</h3>
                 <p>
-                  {format(new Date(selectedRequest.createdAt), "d MMMM yyyy à HH:mm", {
+                  {format(new Date(selectedRequest.created_at || ""), "d MMMM yyyy à HH:mm", {
                     locale: fr,
                   })}
                 </p>
@@ -339,7 +340,7 @@ const AgentDashboard = () => {
             <div>
               <h1 className="text-3xl font-bold">Espace Agent</h1>
               <p className="text-muted-foreground">
-                Bienvenue, {user.name}
+                Bienvenue, {profile?.full_name || "Agent"}
               </p>
             </div>
           </div>

@@ -18,18 +18,20 @@ export interface Address {
   country?: string;
 }
 
-// Statut des demandes
-export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'completed';
+// Statut des demandes - Adding 'declined' to the possible statuses
+export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'declined' | 'completed';
 
-// Demande de déménagement
+// Demande de déménagement - Ensuring property names are consistent
 export interface MoveRequest {
   id: string;
   user_id: string;
   pickupAddress: Address;
   deliveryAddress: Address;
-  moveDate: string;
+  moveDate: string; // Explicitly defining as string, not Date
   description: string;
   items: string[];
   status: RequestStatus;
   created_at?: string;
+  updated_at?: string;
+  approved_by?: string;
 }

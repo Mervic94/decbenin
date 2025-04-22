@@ -21,7 +21,7 @@ interface RequestContextType {
 const MOCK_REQUESTS: MoveRequest[] = [
   {
     id: '1',
-    userId: '1',
+    user_id: '1',
     pickupAddress: {
       street: '123 Rue Principale',
       city: 'Cotonou',
@@ -34,16 +34,16 @@ const MOCK_REQUESTS: MoveRequest[] = [
       zipCode: '01 BP 5678',
       country: 'Bénin',
     },
-    moveDate: new Date(2025, 4, 25),
+    moveDate: '2025-05-25', // Changed to string ISO format
     description: 'Déménagement d\'un appartement 2 pièces',
     items: ['Canapé', 'Lit', 'Table', 'Chaises', 'Armoire'],
     status: 'pending',
-    createdAt: new Date(2025, 4, 20),
-    updatedAt: new Date(2025, 4, 20),
+    created_at: '2025-04-20', // Changed to string ISO format
+    updated_at: '2025-04-20', // Changed to string ISO format
   },
   {
     id: '2',
-    userId: '1',
+    user_id: '1',
     pickupAddress: {
       street: '789 Boulevard Maritime',
       city: 'Cotonou',
@@ -56,13 +56,13 @@ const MOCK_REQUESTS: MoveRequest[] = [
       zipCode: '02 BP 3456',
       country: 'Bénin',
     },
-    moveDate: new Date(2025, 5, 15),
+    moveDate: '2025-06-15', // Changed to string ISO format
     description: 'Déménagement d\'un bureau',
     items: ['Bureau', 'Chaises de bureau', 'Classeurs', 'Ordinateurs'],
     status: 'approved',
-    createdAt: new Date(2025, 5, 1),
-    updatedAt: new Date(2025, 5, 2),
-    approvedBy: '2',
+    created_at: '2025-05-01', // Changed to string ISO format
+    updated_at: '2025-05-02', // Changed to string ISO format
+    approved_by: '2',
   },
 ];
 
@@ -89,15 +89,15 @@ export const RequestProvider = ({ children }: { children: ReactNode }) => {
       
       const newRequest: MoveRequest = {
         id: `${requests.length + 1}`,
-        userId: user.id,
+        user_id: user.id,
         pickupAddress,
         deliveryAddress,
-        moveDate,
+        moveDate: moveDate.toISOString().split('T')[0], // Convert Date to ISO string date format
         description,
         items,
         status: 'pending',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: new Date().toISOString().split('T')[0], // Convert Date to ISO string date format
+        updated_at: new Date().toISOString().split('T')[0], // Convert Date to ISO string date format
       };
       
       setRequests(prevRequests => [...prevRequests, newRequest]);
@@ -110,7 +110,7 @@ export const RequestProvider = ({ children }: { children: ReactNode }) => {
 
   const getUserRequests = (): MoveRequest[] => {
     if (!user) return [];
-    return requests.filter(request => request.userId === user.id);
+    return requests.filter(request => request.user_id === user.id);
   };
 
   const getPendingRequests = (): MoveRequest[] => {
@@ -134,8 +134,8 @@ export const RequestProvider = ({ children }: { children: ReactNode }) => {
             ? {
                 ...req,
                 status,
-                updatedAt: new Date(),
-                ...(status === 'approved' ? { approvedBy: user.id } : {}),
+                updated_at: new Date().toISOString().split('T')[0], // Convert Date to ISO string date format
+                ...(status === 'approved' ? { approved_by: user.id } : {}),
               }
             : req
         )
