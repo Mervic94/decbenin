@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Layout, PageContainer } from "@/components/Layout";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +27,8 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { fr } from "date-fns/locale";
 import { Address } from "@/types";
+import { useQuoteEstimation } from "@/hooks/useQuoteEstimation";
+import { useRef } from "react";
 
 const QuoteRequest = () => {
   const { isAuthenticated } = useAuth();
@@ -52,6 +53,17 @@ const QuoteRequest = () => {
   const [description, setDescription] = useState("");
   const [items, setItems] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cartons, setCartons] = useState(0);
+  const [pieces, setPieces] = useState(0);
+  const [volumesSpecifiques, setVolumesSpecifiques] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const estimationSectionRef = useRef<HTMLDivElement | null>(null);
+
+  const {
+    loading: estimationLoading,
+    result: estimationResult,
+    sendEstimation,
+  } = useQuoteEstimation();
 
   // Redirect to login if not authenticated
   if (!isAuthenticated) {
@@ -140,6 +152,37 @@ const QuoteRequest = () => {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleEstimation = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Validation simple
+    if (cartons < 0 || pieces < 0) {
+      toast({
+        title: "Erreur",
+        description: "Le nombre de cartons et pièces doit être positif.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (!clientEmail || !clientEmail.includes("@")) {
+      toast({
+        title: "Erreur",
+        description: "Veuillez saisir un email valide pour recevoir le devis.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    await sendEstimation({
+      cartons,
+      pieces,
+      volumesSpecifiques,
+      clientEmail,
+    });
+    // Scroll feedback into view if needed
+    setTimeout(() => estimationSectionRef.current?.scrollIntoView({ behavior: "smooth" }), 200);
   };
 
   // Disable past dates for calendar
@@ -293,7 +336,7 @@ const QuoteRequest = () => {
                   />
                 </div>
 
-                {/* Items */}
+                {/* Articles à déménager (séparés par des virgules) */}
                 <div className="space-y-2">
                   <Label htmlFor="items">Articles à déménager (séparés par des virgules)</Label>
                   <Textarea
@@ -302,6 +345,70 @@ const QuoteRequest = () => {
                     onChange={(e) => setItems(e.target.value)}
                     placeholder="Canapé, lit, armoire, télévision, etc."
                   />
+                </div>
+
+                {/* Estimation Devis Section */}
+                <div className="my-10 p-4 rounded bg-[#F1F0FB] shadow-inner" ref={estimationSectionRef}>
+                  <h3 className="font-medium text-lg mb-2 flex items-center gap-2">
+                    <span role="img" aria-label="devis">📦</span> Estimer et Recevoir votre devis personnalisé
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <div>
+                      <Label>Nombre de cartons</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={cartons}
+                        onChange={e => setCartons(Number(e.target.value))}
+                        placeholder="0"
+                        disabled={estimationLoading}
+                      />
+                    </div>
+                    <div>
+                      <Label>Nombre de pièces</Label>
+                      <Input
+                        type="number"
+                        min={0}
+                        value={pieces}
+                        onChange={e => setPieces(Number(e.target.value))}
+                        placeholder="0"
+                        disabled={estimationLoading}
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label>Volumes spécifiques (m³, séparés par des virgules)</Label>
+                      <Input
+                        value={volumesSpecifiques}
+                        onChange={e => setVolumesSpecifiques(e.target.value)}
+                        placeholder="ex: 1.5, 2.0, 0.8"
+                        disabled={estimationLoading}
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <Label>Votre email pour recevoir le devis PDF</Label>
+                      <Input
+                        type="email"
+                        value={clientEmail}
+                        onChange={e => setClientEmail(e.target.value)}
+                        placeholder="ex : client@example.com"
+                        disabled={estimationLoading}
+                        required
+                      />
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    onClick={handleEstimation}
+                    disabled={estimationLoading}
+                    className="w-full"
+                  >
+                    {estimationLoading ? "Calcul & envoi en cours..." : "Calculer et envoyer le devis"}
+                  </Button>
+                  {estimationResult && (
+                    <div className={`mt-4 p-3 rounded text-center ${estimationResult.success ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"}`}>
+                      {estimationResult.message}
+                    </div>
+                  )}
                 </div>
               </CardContent>
               <CardFooter>
