@@ -1,7 +1,36 @@
 
 import { Link } from "react-router-dom";
+import { Facebook, Instagram, MessageCircle, WhatsApp, Tiktok } from "lucide-react";
 
 export const Footer = () => {
+  const socialLinks = [
+    { 
+      icon: Facebook, 
+      href: "https://www.facebook.com/demenagementexpresscotonou", 
+      label: "Facebook" 
+    },
+    { 
+      icon: Instagram, 
+      href: "https://www.instagram.com/demenagementexpresscotonou", 
+      label: "Instagram" 
+    },
+    { 
+      icon: WhatsApp, 
+      href: "https://wa.me/+22901663555", 
+      label: "WhatsApp" 
+    },
+    { 
+      icon: MessageCircle, 
+      href: "https://m.me/demenagementexpresscotonou", 
+      label: "Messenger" 
+    },
+    { 
+      icon: Tiktok, 
+      href: "https://www.tiktok.com/@demenagementexpresscotonou", 
+      label: "TikTok" 
+    }
+  ];
+
   return (
     <footer className="bg-primary text-primary-foreground pt-10 pb-5">
       <div className="container mx-auto">
@@ -48,6 +77,20 @@ export const Footer = () => {
           </div>
         </div>
         <div className="border-t border-slate-700 mt-8 pt-4 text-center">
+          <div className="flex justify-center space-x-6 mb-4">
+            {socialLinks.map((social) => (
+              <a 
+                key={social.label}
+                href={social.href} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-primary-foreground hover:text-secondary transition-colors"
+                aria-label={social.label}
+              >
+                <social.icon size={24} />
+              </a>
+            ))}
+          </div>
           <p>
             &copy; {new Date().getFullYear()} Déménagement Express Cotonou. Tous droits réservés.
           </p>
