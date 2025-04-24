@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, MessageCircle, WhatsApp, Tiktok } from "lucide-react";
+import { Facebook, Instagram, MessageCircle, MessageSquare, WhatsApp } from "lucide-react";
 
 export const Footer = () => {
   const socialLinks = [
@@ -20,12 +20,12 @@ export const Footer = () => {
       label: "WhatsApp" 
     },
     { 
-      icon: MessageCircle, 
+      icon: MessageSquare, 
       href: "https://m.me/demenagementexpresscotonou", 
       label: "Messenger" 
     },
     { 
-      icon: Tiktok, 
+      icon: MessageCircle, 
       href: "https://www.tiktok.com/@demenagementexpresscotonou", 
       label: "TikTok" 
     }
