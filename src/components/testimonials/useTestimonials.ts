@@ -23,8 +23,8 @@ export function useTestimonials() {
 
   const loadTestimonials = async () => {
     const { data, error } = await supabase
-      .from("testimonials")
-      .select("id, comment, user_id, created_at, profiles:profiles(full_name)")
+      .from("posts")
+      .select("id, content as comment, user_id, created_at, profiles:profiles(full_name)")
       .order("created_at", { ascending: false });
 
     if (error) {
@@ -32,15 +32,15 @@ export function useTestimonials() {
       return;
     }
 
-    setTestimonials(data || []);
+    setTestimonials(data as Testimonial[] || []);
   };
 
   const loadUserTestimonial = async () => {
     if (!user) return;
 
     const { data, error } = await supabase
-      .from("testimonials")
-      .select("id, comment, user_id, created_at, profiles:profiles(full_name)")
+      .from("posts")
+      .select("id, content as comment, user_id, created_at, profiles:profiles(full_name)")
       .eq("user_id", user.id)
       .maybeSingle();
 
@@ -49,7 +49,7 @@ export function useTestimonials() {
       return;
     }
 
-    setUserTestimonial(data);
+    setUserTestimonial(data as Testimonial | null);
   };
 
   const submitTestimonial = async (comment: string) => {
@@ -74,10 +74,10 @@ export function useTestimonials() {
     setIsSubmitting(true);
 
     const { error } = await supabase
-      .from("testimonials")
+      .from("posts")
       .insert({
         user_id: user.id,
-        comment: comment.trim(),
+        content: comment.trim(),
       });
 
     setIsSubmitting(false);
