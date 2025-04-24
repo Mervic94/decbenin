@@ -1,12 +1,18 @@
 
 import { Link } from "react-router-dom";
-import { Facebook, Instagram, MessageCircle, MessageSquare } from "lucide-react";
+import { 
+  Facebook, 
+  Instagram, 
+  MessageCircle, 
+  MessageSquare,
+  Linkedin 
+} from "lucide-react";
 
 export const Footer = () => {
   const socialLinks = [
     { 
       icon: Facebook, 
-      href: "https://www.facebook.com/demenagementexpresscotonou", 
+      href: "https://www.facebook.com/demenagementexpresscotonou/", 
       label: "Facebook" 
     },
     { 
@@ -25,9 +31,9 @@ export const Footer = () => {
       label: "Messenger" 
     },
     { 
-      icon: MessageCircle, 
-      href: "https://www.tiktok.com/@demenagementexpresscotonou", 
-      label: "TikTok" 
+      icon: Linkedin, 
+      href: "https://www.linkedin.com/company/demenagement-express-cotonou", 
+      label: "LinkedIn" 
     }
   ];
 
