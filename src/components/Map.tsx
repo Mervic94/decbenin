@@ -2,7 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { map } from 'lucide-react';
+import { Map as MapIcon } from 'lucide-react';
 
 interface MapProps {
   latitude?: number;
