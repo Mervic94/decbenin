@@ -32,7 +32,9 @@ export function useTestimonials() {
       return;
     }
 
-    setTestimonials(data as Testimonial[] || []);
+    if (data) {
+      setTestimonials(data as unknown as Testimonial[]);
+    }
   };
 
   const loadUserTestimonial = async () => {
@@ -49,7 +51,9 @@ export function useTestimonials() {
       return;
     }
 
-    setUserTestimonial(data as Testimonial | null);
+    if (data) {
+      setUserTestimonial(data as unknown as Testimonial);
+    }
   };
 
   const submitTestimonial = async (comment: string) => {
