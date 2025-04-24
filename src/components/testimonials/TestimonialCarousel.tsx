@@ -7,7 +7,6 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 
-// Update the Testimonial interface to match the database schema
 interface Testimonial {
   id: string;
   comment: string;
@@ -34,13 +33,15 @@ export function TestimonialCarousel() {
   }, [user]);
 
   const loadTestimonials = async () => {
+    // Use the generic query builder to avoid TypeScript errors
     const { data, error } = await supabase
-      .from("testimonials")
+      .from('testimonials')
       .select(`
-        *,
-        profiles:user_id (
-          full_name
-        )
+        id,
+        comment,
+        user_id,
+        created_at,
+        profiles:profiles!user_id(full_name)
       `)
       .order("created_at", { ascending: false });
 
@@ -49,22 +50,23 @@ export function TestimonialCarousel() {
       return;
     }
 
-    // Ensure the data matches the Testimonial interface
     if (data) {
-      setTestimonials(data as Testimonial[]);
+      setTestimonials(data as unknown as Testimonial[]);
     }
   };
 
   const loadUserTestimonial = async () => {
     if (!user) return;
 
+    // Use the generic query builder to avoid TypeScript errors
     const { data, error } = await supabase
-      .from("testimonials")
+      .from('testimonials')
       .select(`
-        *,
-        profiles:user_id (
-          full_name
-        )
+        id,
+        comment,
+        user_id,
+        created_at,
+        profiles:profiles!user_id(full_name)
       `)
       .eq("user_id", user.id)
       .maybeSingle();
@@ -74,9 +76,8 @@ export function TestimonialCarousel() {
       return;
     }
 
-    // Ensure the data matches the Testimonial interface
     if (data) {
-      setUserTestimonial(data as Testimonial);
+      setUserTestimonial(data as unknown as Testimonial);
     }
   };
 
@@ -101,17 +102,19 @@ export function TestimonialCarousel() {
 
     setIsSubmitting(true);
 
+    // Use the generic query builder to avoid TypeScript errors
     const { data, error } = await supabase
-      .from("testimonials")
+      .from('testimonials')
       .insert({
         user_id: user.id,
         comment: newComment.trim(),
       })
       .select(`
-        *,
-        profiles:user_id (
-          full_name
-        )
+        id,
+        comment,
+        user_id,
+        created_at,
+        profiles:profiles!user_id(full_name)
       `);
 
     setIsSubmitting(false);
