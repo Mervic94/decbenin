@@ -1,8 +1,8 @@
-
 import { Layout, PageContainer } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { Truck, Calendar, Package, User, Check, FileText, Home } from "lucide-react";
+import { TestimonialCarousel } from "@/components/testimonials/TestimonialCarousel";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -73,6 +73,9 @@ const Index = () => {
           </div>
         </PageContainer>
       </section>
+
+      {/* Testimonials Section */}
+      <TestimonialCarousel />
 
       {/* Resources */}
       <section className="py-16 bg-white">
