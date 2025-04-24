@@ -7,6 +7,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/hooks/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 
+// Update the Testimonial interface to match the database schema
 interface Testimonial {
   id: string;
   comment: string;
@@ -14,7 +15,7 @@ interface Testimonial {
   created_at: string;
   profiles?: {
     full_name: string | null;
-  };
+  } | null;
 }
 
 export function TestimonialCarousel() {
@@ -48,7 +49,10 @@ export function TestimonialCarousel() {
       return;
     }
 
-    setTestimonials(data || []);
+    // Ensure the data matches the Testimonial interface
+    if (data) {
+      setTestimonials(data as Testimonial[]);
+    }
   };
 
   const loadUserTestimonial = async () => {
@@ -56,7 +60,12 @@ export function TestimonialCarousel() {
 
     const { data, error } = await supabase
       .from("testimonials")
-      .select()
+      .select(`
+        *,
+        profiles:user_id (
+          full_name
+        )
+      `)
       .eq("user_id", user.id)
       .maybeSingle();
 
@@ -65,7 +74,10 @@ export function TestimonialCarousel() {
       return;
     }
 
-    setUserTestimonial(data);
+    // Ensure the data matches the Testimonial interface
+    if (data) {
+      setUserTestimonial(data as Testimonial);
+    }
   };
 
   const submitTestimonial = async () => {
@@ -89,12 +101,18 @@ export function TestimonialCarousel() {
 
     setIsSubmitting(true);
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("testimonials")
       .insert({
         user_id: user.id,
         comment: newComment.trim(),
-      });
+      })
+      .select(`
+        *,
+        profiles:user_id (
+          full_name
+        )
+      `);
 
     setIsSubmitting(false);
 
@@ -121,8 +139,12 @@ export function TestimonialCarousel() {
     });
 
     setNewComment("");
-    loadTestimonials();
-    loadUserTestimonial();
+    
+    // Update testimonials and user testimonial if data is returned
+    if (data && data.length > 0) {
+      loadTestimonials();
+      loadUserTestimonial();
+    }
   };
 
   return (
