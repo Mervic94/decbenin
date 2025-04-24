@@ -29,6 +29,7 @@ import { fr } from "date-fns/locale";
 import { Address } from "@/types";
 import { useQuoteEstimation } from "@/hooks/useQuoteEstimation";
 import { useRef } from "react";
+import Map from "@/components/Map";
 
 const QuoteRequest = () => {
   const { isAuthenticated } = useAuth();
@@ -246,6 +247,9 @@ const QuoteRequest = () => {
                       />
                     </div>
                   </div>
+                  <div className="mt-4">
+                    <Map />
+                  </div>
                 </div>
 
                 {/* Delivery Address */}
@@ -288,6 +292,9 @@ const QuoteRequest = () => {
                         disabled
                       />
                     </div>
+                  </div>
+                  <div className="mt-4">
+                    <Map />
                   </div>
                 </div>
 

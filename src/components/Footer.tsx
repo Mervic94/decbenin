@@ -7,6 +7,7 @@ import {
   MessageSquare,
   Linkedin 
 } from "lucide-react";
+import Map from "./Map";
 
 export const Footer = () => {
   const socialLinks = [
@@ -40,7 +41,7 @@ export const Footer = () => {
   return (
     <footer className="bg-primary text-primary-foreground pt-10 pb-5">
       <div className="container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">Déménagement Express Cotonou</h3>
             <p className="mb-4">
@@ -80,6 +81,10 @@ export const Footer = () => {
               <li>Téléphone: +229 01 663 555 09</li>
               <li>Email: demenagementexpresscotonou@gmail.com</li>
             </ul>
+          </div>
+          <div>
+            <h3 className="text-xl font-bold mb-4">Notre localisation</h3>
+            <Map height="200px" />
           </div>
         </div>
         <div className="border-t border-slate-700 mt-8 pt-4 text-center">
