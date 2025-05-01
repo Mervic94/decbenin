@@ -21,7 +21,7 @@ export interface Address {
 // Statut des demandes - Adding 'declined' to the possible statuses
 export type RequestStatus = 'pending' | 'approved' | 'rejected' | 'declined' | 'completed';
 
-// Demande de déménagement - Ensuring property names are consistent
+// Demande de déménagement - Ensuring property names are consistent and adding agent_id
 export interface MoveRequest {
   id: string;
   user_id: string;
@@ -34,4 +34,29 @@ export interface MoveRequest {
   created_at?: string;
   updated_at?: string;
   approved_by?: string;
+  agent_id?: string | null;
+  assigned_at?: string;
+}
+
+// Message type for agent-client communication
+export interface Message {
+  id: string;
+  request_id: string;
+  sender_id: string;
+  recipient_id: string;
+  content: string;
+  read: boolean;
+  created_at: string;
+}
+
+// Notification type for system notifications
+export interface Notification {
+  id: string;
+  user_id: string;
+  title: string;
+  content: string;
+  read: boolean;
+  type: string;
+  reference_id?: string;
+  created_at: string;
 }

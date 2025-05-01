@@ -20,6 +20,7 @@ import NotFound from "./pages/NotFound";
 import ChecklistDemenagement from "./pages/ChecklistDemenagement";
 import OrganiserDemenagement from "./pages/OrganiserDemenagement";
 import Profile from "./pages/Profile";
+import Messages from "./pages/Messages";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
               <Route path="/services" element={<Services />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/messages" element={<Messages />} />
               <Route path="/checklist-demenagement" element={<ChecklistDemenagement />} />
               <Route path="/organiser-demenagement" element={<OrganiserDemenagement />} />
               <Route path="*" element={<NotFound />} />
