@@ -46,7 +46,7 @@ const Services = () => {
           <ServicesSection />
           <div className="text-center mt-10">
             <Button onClick={() => navigate("/quote")}>
-              Voir tous nos services
+              Demander un devis
             </Button>
           </div>
 

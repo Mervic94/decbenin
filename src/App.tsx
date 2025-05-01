@@ -19,6 +19,7 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import ChecklistDemenagement from "./pages/ChecklistDemenagement";
 import OrganiserDemenagement from "./pages/OrganiserDemenagement";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => (
               <Route path="/agent" element={<AgentDashboard />} />
               <Route path="/services" element={<Services />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/profile" element={<Profile />} />
               <Route path="/checklist-demenagement" element={<ChecklistDemenagement />} />
               <Route path="/organiser-demenagement" element={<OrganiserDemenagement />} />
               <Route path="*" element={<NotFound />} />
