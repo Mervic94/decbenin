@@ -28,24 +28,42 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   // Fetch user profile from supabase table
   const fetchUserProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-    if (data) setProfile(data);
-    else setProfile(null);
+    try {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .maybeSingle();
+  
+      if (data) {
+        setProfile(data);
+      } else {
+        setProfile(null);
+      }
+    } catch (error) {
+      console.error('Error fetching profile:', error);
+      setProfile(null);
+    }
   };
 
   // Fetch role
   const fetchUserRole = async (userId: string) => {
-    const { data, error } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .maybeSingle();
-    if (data && data.role) setUserRole(data.role as UserRole);
-    else setUserRole(null);
+    try {
+      const { data, error } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', userId)
+        .maybeSingle();
+  
+      if (data && data.role) {
+        setUserRole(data.role as UserRole);
+      } else {
+        setUserRole(null);
+      }
+    } catch (error) {
+      console.error('Error fetching user role:', error);
+      setUserRole(null);
+    }
   };
 
   useEffect(() => {
@@ -78,17 +96,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
+    try {
+      // For demo accounts, use mock authentication
+      if (
+        (email === 'client@moveit.com' && password === 'demopass123') ||
+        (email === 'agent@moveit.com' && password === 'demopass123') ||
+        (email === 'admin@moveit.com' && password === 'demopass123')
+      ) {
+        const mockRole = email.includes('client') ? 'user' : email.includes('agent') ? 'agent' : 'admin' as UserRole;
+        const mockId = email.includes('client') ? 'client-demo-id' : email.includes('agent') ? 'agent-demo-id' : 'admin-demo-id';
+        
+        // Create mock user and profile
+        const mockUser = {
+          id: mockId,
+          email: email,
+          role: mockRole,
+          aud: 'authenticated',
+          created_at: new Date().toISOString()
+        } as unknown as User;
+        
+        const mockProfile = {
+          id: mockId,
+          full_name: email.includes('client') ? 'Client Demo' : email.includes('agent') ? 'Agent Demo' : 'Admin Demo',
+          created_at: new Date().toISOString()
+        } as Profile;
+        
+        setUser(mockUser);
+        setProfile(mockProfile);
+        setUserRole(mockRole);
+        
+        setIsLoading(false);
+        return true;
+      }
+      
+      // Real authentication for non-demo accounts
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      });
 
-    if (data?.user) {
-      await fetchUserProfile(data.user.id);
-      await fetchUserRole(data.user.id);
+      if (data?.user) {
+        await fetchUserProfile(data.user.id);
+        await fetchUserRole(data.user.id);
+      }
+      
+      setIsLoading(false);
+      return !error;
+    } catch (error) {
+      console.error('Login error:', error);
+      setIsLoading(false);
+      return false;
     }
-    setIsLoading(false);
-    return !error;
   };
 
   const loginWithGoogle = async (): Promise<boolean> => {
@@ -102,22 +160,29 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: name,
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: name,
+          }
         }
-      }
-    });
+      });
 
-    if (data?.user) {
-      await fetchUserProfile(data.user.id);
-      await fetchUserRole(data.user.id);
+      if (data?.user) {
+        await fetchUserProfile(data.user.id);
+        await fetchUserRole(data.user.id);
+      }
+      
+      setIsLoading(false);
+      return !error;
+    } catch (error) {
+      console.error('Registration error:', error);
+      setIsLoading(false);
+      return false;
     }
-    setIsLoading(false);
-    return !error;
   };
 
   const logout = () => {

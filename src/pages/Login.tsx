@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Layout, PageContainer } from "@/components/Layout";
 import { useNavigate, Link } from "react-router-dom";
@@ -65,9 +66,15 @@ const Login = () => {
     }
   };
 
+  const useDemoAccount = (email: string, password: string) => {
+    setEmail(email);
+    setPassword(password);
+  };
+
   const demoAccounts = [
-    { type: "Client", email: "user@example.com", password: "password" },
-    { type: "Agent", email: "agent@example.com", password: "password" },
+    { type: "Client", email: "client@moveit.com", password: "demopass123" },
+    { type: "Agent", email: "agent@moveit.com", password: "demopass123" },
+    { type: "Admin", email: "admin@moveit.com", password: "demopass123" },
   ];
 
   return (
@@ -135,9 +142,18 @@ const Login = () => {
           </p>
           <div className="space-y-2">
             {demoAccounts.map((account, index) => (
-              <div key={index} className="text-sm p-2 bg-gray-50 rounded">
-                <p><strong>{account.type}:</strong> {account.email}</p>
-                <p><strong>Mot de passe:</strong> {account.password}</p>
+              <div key={index} className="text-sm p-2 bg-gray-50 rounded flex justify-between items-center">
+                <div>
+                  <p><strong>{account.type}:</strong> {account.email}</p>
+                  <p><strong>Mot de passe:</strong> {account.password}</p>
+                </div>
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => useDemoAccount(account.email, account.password)}
+                >
+                  Utiliser
+                </Button>
               </div>
             ))}
           </div>
