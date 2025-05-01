@@ -1,7 +1,8 @@
 
 import { ArrowLeftRight, Icon } from "lucide-react";
+import type { LucideProps } from "lucide-react";
 
-// Cette fonction sert à créer un TransferIcon puisqu'il n'existe pas dans lucide-react
-export const TransferIcon = (props: React.ComponentProps<typeof Icon>) => {
+// This function creates a TransferIcon since it doesn't exist in lucide-react
+export const TransferIcon = (props: LucideProps) => {
   return <ArrowLeftRight {...props} />;
 };
