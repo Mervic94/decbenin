@@ -34,7 +34,7 @@ export const RequestList = ({
         >
           <RequestCard
             request={request}
-            customAction={customAction ? customAction(request) : undefined}
+            customAction={customAction?.(request)}
           />
         </div>
       ))}

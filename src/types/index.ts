@@ -29,6 +29,9 @@ export interface MoveRequest {
   description: string;
   items: string[];
   requestType?: "residential" | "commercial" | "international";
+  // Add the missing properties that are being used in the codebase
+  assigned_at?: string;
+  approved_by?: string;
 }
 
 export type RequestStatus = "pending" | "approved" | "declined" | "completed";
@@ -54,4 +57,8 @@ export interface Notification {
   message: string;
   created_at: string;
   read: boolean;
+  // Add the missing properties that are being used in the codebase
+  title?: string;
+  content?: string;
+  type?: string;
 }

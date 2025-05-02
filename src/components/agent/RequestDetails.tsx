@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { RequestAddressDetails } from "./RequestAddressDetails";
 import { RequestMessagesList } from "./RequestMessagesList";
 import { RequestActionsFooter } from "./RequestActionsFooter";
+import Map from "@/components/Map";
 
 interface RequestDetailsProps {
   isOpen: boolean;
@@ -42,6 +43,10 @@ export const RequestDetails = ({
   const isAssignedToCurrentAgent = selectedRequest.agent_id === user?.id;
   const canApprove = selectedRequest.status === "pending" && (isAssignedToCurrentAgent || !isAssigned);
   const canMessage = isAssignedToCurrentAgent;
+
+  // Extract coordinates from pickup address
+  const pickupLatitude = 6.3702928; // Default coordinates for Cotonou
+  const pickupLongitude = 2.3912362;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -77,6 +82,16 @@ export const RequestDetails = ({
           <Separator />
           
           <RequestAddressDetails selectedRequest={selectedRequest} />
+
+          {/* Map view of pickup location */}
+          <div className="mt-4">
+            <h3 className="font-medium mb-2">Localisation du point de départ</h3>
+            <Map 
+              latitude={pickupLatitude}
+              longitude={pickupLongitude}
+              height="200px"
+            />
+          </div>
 
           <Separator />
 

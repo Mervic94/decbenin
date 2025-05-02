@@ -1,3 +1,4 @@
+
 import { Layout, PageContainer } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Mail, Phone, MapPin, Send } from "lucide-react";
+import Map from "@/components/Map";
 
 const CONTACT_PHONE = "+229 01 663 555 09";
 const CONTACT_MAIL = "demenagementexpresscotonou@gmail.com";
@@ -156,17 +158,11 @@ const Contact = () => {
             
             <div className="bg-white p-6 rounded-lg border border-border shadow-sm">
               <h2 className="text-2xl font-bold mb-6">Notre localisation</h2>
-              <div className="h-[400px] bg-muted flex items-center justify-center rounded-md">
-                <div className="text-center p-4">
-                  <MapPin className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">
-                    Carte interactive indisponible pour le moment
-                  </p>
-                  <p className="font-medium mt-2">
-                    123 Rue Principale, Cotonou, Bénin
-                  </p>
-                </div>
-              </div>
+              <Map
+                latitude={6.3702928} 
+                longitude={2.3912362}
+                height="400px"
+              />
             </div>
           </div>
 
@@ -175,7 +171,7 @@ const Contact = () => {
             <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
               Si vous préférez, vous pouvez demander un devis en ligne et nous vous contacterons dans les plus brefs délais.
             </p>
-            <Button size="lg" onClick={() => window.location.href = "/quote"}>
+            <Button size="lg" onClick={() => window.location.href = "/quote"} className="bg-orange-500 text-white hover:bg-gray-200 hover:text-gray-800">
               Demander un devis
             </Button>
           </div>
