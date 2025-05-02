@@ -1,6 +1,7 @@
 
 import { MoveRequest } from '@/types';
 import { toast } from 'sonner';
+import { useNotificationService } from '@/hooks/useNotificationService';
 
 export const useRequestTransfer = (
   updateRequest: (request: MoveRequest) => void,

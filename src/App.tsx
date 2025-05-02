@@ -1,9 +1,10 @@
+
 import { Routes, Route } from "react-router-dom";
-import Home from "./pages/Home";
+import Home from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import RequestForm from "./pages/RequestForm";
+import RequestForm from "./pages/QuoteRequest";
 import AgentDashboard from "./pages/AgentDashboard";
 import CookiesPolicy from "@/pages/CookiesPolicy";
 
