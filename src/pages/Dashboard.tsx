@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Layout, PageContainer } from "@/components/Layout";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { useRequests } from "@/context/RequestContext";
+import { useRequests } from "@/context/request";
 
 // Import the new components
 import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
