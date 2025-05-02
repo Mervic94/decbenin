@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Map from "@/components/Map";
-import { QuoteRequest } from "@/pages/Profile";
+import { QuoteRequest } from "@/types";
 
 interface QuoteItemProps {
   quote: QuoteRequest;

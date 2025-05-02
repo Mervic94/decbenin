@@ -1,7 +1,15 @@
-
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserRole } from '@/types';
+
+// Define a simple User type to fix the type error
+type User = {
+  id: string;
+  email: string;
+  role: UserRole;
+  aud: string;
+  created_at: string;
+};
 
 export const useAuthActions = (userId: string | undefined) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -32,7 +40,7 @@ export const useAuthActions = (userId: string | undefined) => {
           role: mockRole,
           aud: 'authenticated',
           created_at: new Date().toISOString()
-        } as unknown as User;
+        } as User;
         
         // We'll handle the profile and role setting in the auth state hook
         // Simulating a successful login

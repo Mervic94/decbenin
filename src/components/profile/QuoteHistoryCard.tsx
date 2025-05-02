@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,7 +9,7 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
-import { QuoteRequest } from "@/pages/Profile";
+import { QuoteRequest } from "@/types";
 import { QuoteItem } from "./QuoteItem";
 
 interface QuoteHistoryCardProps {
@@ -21,13 +22,40 @@ interface QuoteHistoryCardProps {
 }
 
 export const QuoteHistoryCard = ({ 
-  isLoading, 
-  searchTerm, 
-  setSearchTerm,
-  filteredQuotes,
-  selectedQuote,
-  setSelectedQuote
-}: QuoteHistoryCardProps) => {
+  isLoading = false, 
+  searchTerm = "", 
+  setSearchTerm = () => {},
+  filteredQuotes = [],
+  selectedQuote = null,
+  setSelectedQuote = () => {}
+}: Partial<QuoteHistoryCardProps> = {}) => {
+  // Mock data for demonstration when no props are provided
+  const [mockSearchTerm, setMockSearchTerm] = useState("");
+  const [mockSelectedQuote, setMockSelectedQuote] = useState<QuoteRequest | null>(null);
+  
+  const mockQuotes: QuoteRequest[] = [
+    {
+      id: "1",
+      reference: "REF-20240501",
+      created_at: "2024-05-01T10:00:00Z",
+      move_date: "2024-06-15T00:00:00Z",
+      status: "pending",
+      volume: 35,
+      pickup_address: "123 Rue du Commerce, Cotonou",
+      delivery_address: "456 Avenue des Arts, Cotonou",
+      pickup_coordinates: { latitude: 6.3702, longitude: 2.3912 },
+      delivery_coordinates: { latitude: 6.3802, longitude: 2.4012 }
+    }
+  ];
+
+  // Use either provided props or mock data
+  const currentSearchTerm = setSearchTerm ? searchTerm : mockSearchTerm;
+  const currentSetSearchTerm = setSearchTerm || setMockSearchTerm;
+  const currentFilteredQuotes = filteredQuotes.length > 0 ? filteredQuotes : mockQuotes;
+  const currentSelectedQuote = setSelectedQuote ? selectedQuote : mockSelectedQuote;
+  const currentSetSelectedQuote = setSelectedQuote || setMockSelectedQuote;
+  const currentIsLoading = isLoading;
+
   return (
     <Card>
       <CardHeader>
@@ -41,28 +69,28 @@ export const QuoteHistoryCard = ({
             <Input 
               placeholder="Rechercher par référence ou adresse..." 
               className="pl-10"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              value={currentSearchTerm}
+              onChange={(e) => currentSetSearchTerm(e.target.value)}
             />
           </div>
         </div>
         
-        {isLoading ? (
+        {currentIsLoading ? (
           <div className="text-center py-8">Chargement...</div>
-        ) : filteredQuotes.length === 0 ? (
+        ) : currentFilteredQuotes.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            {searchTerm 
+            {currentSearchTerm 
               ? "Aucun résultat trouvé pour votre recherche." 
               : "Vous n'avez pas encore de demande de devis."}
           </div>
         ) : (
           <div className="space-y-4">
-            {filteredQuotes.map((quote) => (
+            {currentFilteredQuotes.map((quote) => (
               <QuoteItem 
                 key={quote.id} 
                 quote={quote} 
-                selectedQuote={selectedQuote}
-                setSelectedQuote={setSelectedQuote}
+                selectedQuote={currentSelectedQuote}
+                setSelectedQuote={currentSetSelectedQuote}
               />
             ))}
           </div>

@@ -13,6 +13,7 @@ import { ProfileDetails } from "@/components/profile/ProfileDetails";
 import { QuoteHistoryCard } from "@/components/profile/QuoteHistoryCard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { QuoteRequest } from "@/types";
 
 const Profile = () => {
   const { user, profile } = useAuth();
@@ -22,6 +23,50 @@ const Profile = () => {
   const [fullName, setFullName] = useState(profile?.full_name || "");
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "");
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Quote history state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredQuotes, setFilteredQuotes] = useState<QuoteRequest[]>([]);
+  const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
+  const [quoteHistoryLoading, setQuoteHistoryLoading] = useState(false);
+
+  // Mock quote data
+  const mockQuotes: QuoteRequest[] = [
+    {
+      id: "1",
+      reference: "REF-20240501",
+      created_at: "2024-05-01T10:00:00Z",
+      move_date: "2024-06-15T00:00:00Z",
+      status: "pending",
+      volume: 35,
+      pickup_address: "123 Rue du Commerce, Cotonou",
+      delivery_address: "456 Avenue des Arts, Cotonou",
+      pickup_coordinates: { latitude: 6.3702, longitude: 2.3912 },
+      delivery_coordinates: { latitude: 6.3802, longitude: 2.4012 }
+    },
+    {
+      id: "2",
+      reference: "REF-20240420",
+      created_at: "2024-04-20T14:30:00Z",
+      move_date: "2024-05-30T00:00:00Z",
+      status: "completed",
+      volume: 20,
+      pickup_address: "789 Avenue des Palmiers, Cotonou",
+      delivery_address: "101 Boulevard de la Paix, Cotonou",
+      pickup_coordinates: { latitude: 6.3602, longitude: 2.3812 },
+      delivery_coordinates: { latitude: 6.3902, longitude: 2.4112 }
+    }
+  ];
+
+  // Filter quotes based on search term
+  useState(() => {
+    const filtered = mockQuotes.filter(quote => 
+      quote.reference.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      quote.pickup_address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      quote.delivery_address.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredQuotes(filtered);
+  });
 
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -176,7 +221,6 @@ const Profile = () => {
                         <ProfileDetails
                           fullName={profile?.full_name || "Non renseigné"}
                           email={user?.email || "Non renseigné"}
-                          // We removed phone and address as they don't exist in the Profile type
                         />
                         <div className="flex justify-end mt-4">
                           <Button onClick={() => setIsEditing(true)}>
@@ -191,7 +235,14 @@ const Profile = () => {
             </TabsContent>
 
             <TabsContent value="quotes">
-              <QuoteHistoryCard />
+              <QuoteHistoryCard 
+                isLoading={quoteHistoryLoading}
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                filteredQuotes={filteredQuotes}
+                selectedQuote={selectedQuote}
+                setSelectedQuote={setSelectedQuote}
+              />
             </TabsContent>
           </Tabs>
         </div>

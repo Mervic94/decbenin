@@ -13,23 +13,33 @@ import {
 import { useToast } from "@/hooks/use-toast";
 
 interface ProfileDetailsProps {
-  user: any;
-  profile: any;
-  isLoading: boolean;
-  setIsLoading: (value: boolean) => void;
+  user?: any;
+  profile?: any;
+  isLoading?: boolean;
+  setIsLoading?: (value: boolean) => void;
+  // Add these properties to fix the error
+  fullName?: string;
+  email?: string;
 }
 
-export const ProfileDetails = ({ user, profile, isLoading, setIsLoading }: ProfileDetailsProps) => {
+export const ProfileDetails = ({ 
+  user,
+  profile,
+  isLoading,
+  setIsLoading,
+  fullName,
+  email
+}: ProfileDetailsProps) => {
   const { toast } = useToast();
-  const [fullName, setFullName] = useState(profile?.full_name || "");
+  const [fullNameState, setFullNameState] = useState(fullName || profile?.full_name || "");
 
   const updateProfile = async () => {
-    if (!user) return;
+    if (!user || !setIsLoading) return;
 
     setIsLoading(true);
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: fullName })
+      .update({ full_name: fullNameState })
       .eq("id", user.id);
 
     setIsLoading(false);
@@ -49,6 +59,22 @@ export const ProfileDetails = ({ user, profile, isLoading, setIsLoading }: Profi
     });
   };
 
+  // Simple display for when user is null or only display data is provided
+  if (!user || !setIsLoading) {
+    return (
+      <div className="space-y-4">
+        <div>
+          <p className="text-sm font-medium mb-1">Email</p>
+          <p className="text-base">{email || "Non renseigné"}</p>
+        </div>
+        <div>
+          <p className="text-sm font-medium mb-1">Nom complet</p>
+          <p className="text-base">{fullName || "Non renseigné"}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -64,8 +90,8 @@ export const ProfileDetails = ({ user, profile, isLoading, setIsLoading }: Profi
           <div>
             <label className="text-sm font-medium mb-1 block">Nom complet</label>
             <Input 
-              value={fullName} 
-              onChange={(e) => setFullName(e.target.value)} 
+              value={fullNameState} 
+              onChange={(e) => setFullNameState(e.target.value)} 
               placeholder="Votre nom complet"
             />
           </div>

@@ -34,7 +34,7 @@ export const RequestList = ({
         >
           <RequestCard
             request={request}
-            customAction={customAction?.(request)}
+            openDetails={() => onRequestClick(request)}
           />
         </div>
       ))}

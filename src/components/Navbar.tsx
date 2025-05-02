@@ -1,4 +1,3 @@
-
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/AuthContext";
@@ -51,18 +50,22 @@ export const Navbar = () => {
           user_id: user?.id || "",
           title: "Nouveau message",
           content: "L'agent a répondu à votre demande de devis",
+          message: "L'agent a répondu à votre demande de devis",
           read: false,
           type: "message",
           created_at: new Date(Date.now() - 3600000).toISOString(),
+          reference_id: "2"
         },
         {
           id: "2",
           user_id: user?.id || "",
           title: "Devis approuvé",
           content: "Votre demande de devis a été approuvée",
+          message: "Votre demande de devis a été approuvée",
           read: false,
           type: "quote",
           created_at: new Date(Date.now() - 86400000).toISOString(),
+          reference_id: "2"
         }
       ];
       
@@ -246,6 +249,12 @@ export const Navbar = () => {
                     <DropdownMenuItem onClick={() => navigate("/agent-dashboard")}>
                       <Package className="mr-2 h-4 w-4" />
                       <span>Espace Agent</span>
+                    </DropdownMenuItem>
+                  )}
+                  {(userRole === "moderator" || userRole === "admin") && (
+                    <DropdownMenuItem onClick={() => navigate("/moderator-dashboard")}>
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>Espace Modérateur</span>
                     </DropdownMenuItem>
                   )}
                   {userRole === "admin" && (

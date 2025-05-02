@@ -13,10 +13,12 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { ReactNode } from "react";
 
 interface RequestCardProps {
   request: MoveRequest;
   openDetails: (request: MoveRequest) => void;
+  customAction?: ReactNode;
 }
 
 const getStatusBadge = (status: string) => {
@@ -46,7 +48,7 @@ const getAssignmentBadge = (request: MoveRequest, userId?: string) => {
   return null;
 };
 
-export const RequestCard = ({ request, openDetails }: RequestCardProps) => {
+export const RequestCard = ({ request, openDetails, customAction }: RequestCardProps) => {
   const userId = undefined; // Sera remplacé par user?.id dans le composant parent
 
   return (
@@ -99,10 +101,10 @@ export const RequestCard = ({ request, openDetails }: RequestCardProps) => {
           </div>
         </div>
       </CardContent>
-      <CardFooter className="pt-2">
+      <CardFooter className="pt-2 flex justify-between">
         <Button
           variant="outline"
-          className="w-full"
+          className="flex-1 mr-2"
           onClick={(e) => {
             e.stopPropagation();
             openDetails(request);
@@ -110,6 +112,11 @@ export const RequestCard = ({ request, openDetails }: RequestCardProps) => {
         >
           Voir les détails
         </Button>
+        {customAction && (
+          <div onClick={(e) => e.stopPropagation()} className="flex-shrink-0">
+            {customAction}
+          </div>
+        )}
       </CardFooter>
     </Card>
   );

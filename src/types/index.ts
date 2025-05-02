@@ -39,7 +39,7 @@ export type RequestStatus = "pending" | "approved" | "declined" | "completed";
 export interface Message {
   id: string;
   request_id: string;
-  user_id: string;
+  user_id: string; // Adding this required property
   sender_id?: string;
   recipient_id?: string;
   content: string;
@@ -54,11 +54,32 @@ export interface Message {
 export interface Notification {
   id: string;
   user_id: string;
-  message: string;
+  message: string; // Adding this required property
   created_at: string;
   read: boolean;
   // Add the missing properties that are being used in the codebase
   title?: string;
   content?: string;
   type?: string;
+  reference_id?: string; // Adding this property used in Messages.tsx
+}
+
+// Define QuoteRequest interface for the profile page
+export interface QuoteRequest {
+  id: string;
+  reference: string;
+  created_at: string;
+  move_date: string;
+  status: 'pending' | 'completed';
+  volume: number;
+  pickup_address: string;
+  delivery_address: string;
+  pickup_coordinates: {
+    latitude: number;
+    longitude: number;
+  };
+  delivery_coordinates: {
+    latitude: number;
+    longitude: number;
+  };
 }

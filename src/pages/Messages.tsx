@@ -83,6 +83,7 @@ const Messages = () => {
         {
           id: "msg1",
           request_id: "request1",
+          user_id: "agent1", // Adding required user_id
           sender_id: "agent1",
           recipient_id: user?.id || "",
           content: "Bonjour, je suis l'agent en charge de votre demande de déménagement. Comment puis-je vous aider ?",
@@ -92,6 +93,7 @@ const Messages = () => {
         {
           id: "msg2",
           request_id: "request1",
+          user_id: user?.id || "", // Adding required user_id
           sender_id: user?.id || "",
           recipient_id: "agent1",
           content: "Bonjour, je voudrais savoir quand pourra avoir lieu mon déménagement.",
@@ -101,6 +103,7 @@ const Messages = () => {
         {
           id: "msg3",
           request_id: "request1",
+          user_id: "agent1", // Adding required user_id
           sender_id: "agent1",
           recipient_id: user?.id || "",
           content: "Nous pouvons organiser votre déménagement pour le 10 juin comme demandé. Avez-vous des exigences particulières concernant l'horaire ?",
@@ -116,6 +119,7 @@ const Messages = () => {
           user_id: user?.id || "",
           title: "Nouveau message",
           content: "Un agent vous a envoyé un message concernant votre demande de déménagement.",
+          message: "Un agent vous a envoyé un message concernant votre demande de déménagement.",
           read: false,
           type: "message",
           reference_id: "request1",
@@ -126,6 +130,7 @@ const Messages = () => {
           user_id: user?.id || "",
           title: "Demande approuvée",
           content: "Votre demande de devis a été approuvée.",
+          message: "Votre demande de devis a été approuvée.",
           read: true,
           type: "status_update",
           reference_id: "request1",
@@ -225,6 +230,7 @@ const Messages = () => {
       const newMsg: Message = {
         id: `new-${Date.now()}`,
         request_id: selectedGroupId,
+        user_id: user.id, // Adding required user_id
         sender_id: user.id,
         recipient_id: recipientId,
         content: newMessage.trim(),
