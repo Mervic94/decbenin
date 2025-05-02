@@ -56,7 +56,7 @@ export const useAgentDashboard = () => {
     setPendingAction,
     setIsSubmitting,
     setMessages,
-    setIsTransferModalOpen,
+    setIsMessageModalOpen,
     setIsTransferModalOpen,
     setTransferAgentId,
     transferAgentId,

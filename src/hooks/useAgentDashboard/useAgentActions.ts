@@ -1,10 +1,8 @@
 
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { useRequests } from "@/context/request";
 import { MoveRequest } from "@/types";
 import { toast } from "sonner";
-import { useAuth } from "@/context/AuthContext";
-import { useRequests } from "@/context/RequestContext";
 
 export const useAgentActions = (
   setSelectedRequest: (request: MoveRequest | null) => void,
@@ -14,7 +12,7 @@ export const useAgentActions = (
   setIsSubmitting: (isSubmitting: boolean) => void,
   setMessages: (messages: any) => void,
   setIsMessageModalOpen: (isOpen: boolean) => void,
-  isTransferModalOpen: (isOpen: boolean) => void,
+  setIsTransferModalOpen: (isOpen: boolean) => void,
   setTransferAgentId: (agentId: string) => void,
   transferAgentId: string,
   selectedRequest: MoveRequest | null,
@@ -51,7 +49,7 @@ export const useAgentActions = (
     setPendingAction(action);
     
     if (action === "transfer") {
-      isTransferModalOpen(true);
+      setIsTransferModalOpen(true);
     } else if (action === "assign") {
       executeRequestAction(); // Auto-assign to current agent
     } else {
@@ -97,7 +95,7 @@ export const useAgentActions = (
         toast.success(`La demande a été ${actionText} avec succès`);
         
         setIsConfirmOpen(false);
-        isTransferModalOpen(false);
+        setIsTransferModalOpen(false);
         closeDetails();
         
         // Refresh data
