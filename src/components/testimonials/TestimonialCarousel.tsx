@@ -17,7 +17,7 @@ import { LogIn } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export function TestimonialCarousel() {
-  const { user } = useAuth();
+  const { user, userRole } = useAuth();
   const { testimonials, userTestimonial, isSubmitting, submitTestimonial } = useTestimonials();
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -31,6 +31,9 @@ export function TestimonialCarousel() {
     
     return () => clearInterval(interval);
   }, [testimonials.length]);
+
+  // Only regular users can leave testimonials (not agents, moderators, or admins)
+  const canLeaveTestimonial = user && userRole === 'user';
 
   return (
     <div className="py-16 bg-gray-50">
@@ -83,10 +86,12 @@ export function TestimonialCarousel() {
             </div>
           </div>
         ) : (
-          <TestimonialList testimonials={testimonials} />
+          <div className="text-center text-gray-500 mb-8">
+            Aucun témoignage pour l'instant. Soyez le premier à partager votre expérience !
+          </div>
         )}
 
-        {user && !userTestimonial && (
+        {canLeaveTestimonial && !userTestimonial && (
           <TestimonialForm 
             onSubmit={submitTestimonial}
             isSubmitting={isSubmitting}
@@ -96,7 +101,7 @@ export function TestimonialCarousel() {
         {!user && (
           <div className="text-center max-w-md mx-auto">
             <p className="mb-4 text-gray-600">
-              Connectez-vous pour partager votre expérience avec notre service.
+              Connectez-vous en tant que client pour partager votre expérience avec notre service.
             </p>
             <Button asChild>
               <Link to="/login">
@@ -107,7 +112,15 @@ export function TestimonialCarousel() {
           </div>
         )}
 
-        {user && userTestimonial && (
+        {user && userRole !== 'user' && (
+          <div className="text-center max-w-md mx-auto">
+            <p className="text-gray-600">
+              Seuls les clients peuvent laisser des avis sur nos services.
+            </p>
+          </div>
+        )}
+
+        {canLeaveTestimonial && userTestimonial && (
           <p className="text-center text-gray-600">
             Merci d'avoir partagé votre expérience !
           </p>

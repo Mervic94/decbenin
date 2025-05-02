@@ -1,8 +1,9 @@
+
 import { useState } from 'react';
 import { supabase } from "@/integrations/supabase/client";
 import { UserRole } from '@/types';
 
-// Define a simple User type to fix the type error
+// Define a User type to fix the type error
 type User = {
   id: string;
   email: string;
@@ -42,8 +43,16 @@ export const useAuthActions = (userId: string | undefined) => {
           created_at: new Date().toISOString()
         } as User;
         
-        // We'll handle the profile and role setting in the auth state hook
-        // Simulating a successful login
+        // Simulate a session by storing the mock user in localStorage
+        localStorage.setItem('supabase.auth.token', JSON.stringify({
+          currentSession: {
+            access_token: 'mock-token',
+            user: mockUser
+          }
+        }));
+        
+        // Dispatch an auth state change event
+        window.dispatchEvent(new Event('supabase.auth.token-change'));
         
         setIsLoading(false);
         return true;
@@ -76,6 +85,12 @@ export const useAuthActions = (userId: string | undefined) => {
   const register = async (name: string, email: string, password: string): Promise<boolean> => {
     setIsLoading(true);
     try {
+      // For demo accounts, use mock authentication
+      if (email.includes('@moveit.com')) {
+        setIsLoading(false);
+        return false; // Block registration with demo emails
+      }
+      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -96,6 +111,21 @@ export const useAuthActions = (userId: string | undefined) => {
   };
 
   const logout = () => {
+    // Check if it's a demo account
+    const authToken = localStorage.getItem('supabase.auth.token');
+    if (authToken) {
+      const parsedToken = JSON.parse(authToken);
+      const user = parsedToken?.currentSession?.user;
+      
+      if (user?.email?.includes('@moveit.com')) {
+        // Clear the mock session
+        localStorage.removeItem('supabase.auth.token');
+        window.dispatchEvent(new Event('supabase.auth.token-change'));
+        return;
+      }
+    }
+    
+    // Regular logout for non-demo accounts
     supabase.auth.signOut();
   };
 

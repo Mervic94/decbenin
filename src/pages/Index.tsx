@@ -11,7 +11,7 @@ const Home = () => {
       <div className="relative bg-primary text-white py-24">
         <PageContainer>
           <div className="max-w-3xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            <h1 className="text-3xl md:text-5xl font-bold mb-6 whitespace-nowrap">
               Déménagement Express Cotonou
             </h1>
             <p className="text-xl mb-8">

@@ -1,22 +1,21 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout, PageContainer } from "@/components/Layout";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileDetails } from "@/components/profile/ProfileDetails";
 import { QuoteHistoryCard } from "@/components/profile/QuoteHistoryCard";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { QuoteRequest } from "@/types";
+import Map from "@/components/Map";
 
 const Profile = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, userRole } = useAuth();
   const { toast } = useToast();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -30,7 +29,7 @@ const Profile = () => {
   const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
   const [quoteHistoryLoading, setQuoteHistoryLoading] = useState(false);
 
-  // Mock quote data
+  // Mock quote data for all users
   const mockQuotes: QuoteRequest[] = [
     {
       id: "1",
@@ -58,15 +57,57 @@ const Profile = () => {
     }
   ];
 
-  // Filter quotes based on search term
-  useState(() => {
-    const filtered = mockQuotes.filter(quote => 
+  // Additional quotes for agents
+  const agentMockQuotes: QuoteRequest[] = [
+    {
+      id: "3",
+      reference: "REF-20240515",
+      created_at: "2024-05-15T09:15:00Z",
+      move_date: "2024-07-05T00:00:00Z",
+      status: "pending",
+      volume: 50,
+      pickup_address: "25 Rue des Fleurs, Cotonou",
+      delivery_address: "36 Avenue de l'Indépendance, Cotonou",
+      pickup_coordinates: { latitude: 6.3752, longitude: 2.3852 },
+      delivery_coordinates: { latitude: 6.3812, longitude: 2.4032 }
+    },
+    {
+      id: "4",
+      reference: "REF-20240510",
+      created_at: "2024-05-10T11:20:00Z",
+      move_date: "2024-06-25T00:00:00Z",
+      status: "completed",
+      volume: 15,
+      pickup_address: "87 Boulevard de la Marina, Cotonou",
+      delivery_address: "93 Rue des Ambassades, Cotonou",
+      pickup_coordinates: { latitude: 6.3642, longitude: 2.3762 },
+      delivery_coordinates: { latitude: 6.3922, longitude: 2.4092 }
+    },
+    {
+      id: "5",
+      reference: "REF-20240505",
+      created_at: "2024-05-05T16:45:00Z", 
+      move_date: "2024-06-20T00:00:00Z",
+      status: "pending",
+      volume: 28,
+      pickup_address: "45 Avenue des Cocotiers, Cotonou",
+      delivery_address: "19 Rue du Marché, Cotonou",
+      pickup_coordinates: { latitude: 6.3682, longitude: 2.3842 },
+      delivery_coordinates: { latitude: 6.3862, longitude: 2.4052 }
+    }
+  ];
+
+  // Filter quotes based on search term and role
+  useEffect(() => {
+    let quotes = userRole === 'agent' ? [...mockQuotes, ...agentMockQuotes] : mockQuotes;
+    
+    const filtered = quotes.filter(quote => 
       quote.reference.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.pickup_address.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.delivery_address.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredQuotes(filtered);
-  });
+  }, [searchTerm, userRole]);
 
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -134,12 +175,13 @@ const Profile = () => {
     <Layout>
       <PageContainer>
         <div className="max-w-4xl mx-auto py-8">
-          <h1 className="text-3xl font-bold mb-6">Mon Profil</h1>
+          <h1 className="text-3xl font-bold mb-6">Mon Profil {userRole === 'agent' ? '(Agent)' : ''}</h1>
 
           <Tabs defaultValue="profile" className="w-full">
             <TabsList className="mb-6">
               <TabsTrigger value="profile">Profil</TabsTrigger>
               <TabsTrigger value="quotes">Mes Devis</TabsTrigger>
+              {userRole === 'agent' && <TabsTrigger value="map">Ma Zone</TabsTrigger>}
             </TabsList>
 
             <TabsContent value="profile">
@@ -199,6 +241,17 @@ const Profile = () => {
                             className="bg-gray-100"
                           />
                         </div>
+                        {userRole === 'agent' && (
+                          <div>
+                            <Label htmlFor="role">Rôle</Label>
+                            <Input
+                              id="role"
+                              value="Agent"
+                              disabled
+                              className="bg-gray-100"
+                            />
+                          </div>
+                        )}
 
                         <div className="flex justify-end space-x-2 pt-4">
                           <Button 
@@ -219,8 +272,12 @@ const Profile = () => {
                     ) : (
                       <>
                         <ProfileDetails
-                          fullName={profile?.full_name || "Non renseigné"}
-                          email={user?.email || "Non renseigné"}
+                          user={user}
+                          profile={profile}
+                          isLoading={isLoading}
+                          setIsLoading={setIsLoading}
+                          fullName={profile?.full_name || ""}
+                          email={user?.email || ""}
                         />
                         <div className="flex justify-end mt-4">
                           <Button onClick={() => setIsEditing(true)}>
@@ -243,7 +300,49 @@ const Profile = () => {
                 selectedQuote={selectedQuote}
                 setSelectedQuote={setSelectedQuote}
               />
+              
+              {selectedQuote && (
+                <div className="mt-6">
+                  <h3 className="text-xl font-semibold mb-4">Localisation</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <h4 className="font-medium mb-2">Adresse de départ</h4>
+                      <Map 
+                        latitude={selectedQuote.pickup_coordinates.latitude} 
+                        longitude={selectedQuote.pickup_coordinates.longitude}
+                        height="250px"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2">Adresse de livraison</h4>
+                      <Map 
+                        latitude={selectedQuote.delivery_coordinates.latitude} 
+                        longitude={selectedQuote.delivery_coordinates.longitude}
+                        height="250px"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
             </TabsContent>
+
+            {userRole === 'agent' && (
+              <TabsContent value="map">
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Ma Zone d'Opération</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="mb-4">Vous êtes affecté à la zone de Cotonou et ses environs.</p>
+                    <Map 
+                      latitude={6.3702928} 
+                      longitude={2.3912362}
+                      height="400px"
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            )}
           </Tabs>
         </div>
       </PageContainer>

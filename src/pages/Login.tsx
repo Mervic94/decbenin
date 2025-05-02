@@ -74,6 +74,7 @@ const Login = () => {
   const demoAccounts = [
     { type: "Client", email: "client@moveit.com", password: "demopass123" },
     { type: "Agent", email: "agent@moveit.com", password: "demopass123" },
+    { type: "Modérateur", email: "moderator@moveit.com", password: "demopass123" },
     { type: "Admin", email: "admin@moveit.com", password: "demopass123" },
   ];
 
