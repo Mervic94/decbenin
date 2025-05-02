@@ -7,6 +7,9 @@ import Register from "./pages/Register";
 import RequestForm from "./pages/QuoteRequest";
 import AgentDashboard from "./pages/AgentDashboard";
 import CookiesPolicy from "@/pages/CookiesPolicy";
+import AdminDashboard from "./pages/AdminDashboard";
+import InternalMessages from "./pages/InternalMessages";
+import Messages from "./pages/Messages";
 
 const App = () => {
   return (
@@ -18,6 +21,9 @@ const App = () => {
       <Route path="/request" element={<RequestForm />} />
       <Route path="/agent-dashboard" element={<AgentDashboard />} />
       <Route path="/cookies-policy" element={<CookiesPolicy />} />
+      <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/internal-messages" element={<InternalMessages />} />
+      <Route path="/messages" element={<Messages />} />
     </Routes>
   );
 };

@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User, Package, LogOut, FileText, Home, MessageSquare, Bell } from "lucide-react";
+import { User, Package, LogOut, FileText, Home, MessageSquare, Bell, Users } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useState, useEffect } from "react";
@@ -242,10 +242,16 @@ export const Navbar = () => {
                       </Badge>
                     )}
                   </DropdownMenuItem>
-                  {userRole === "agent" && (
-                    <DropdownMenuItem onClick={() => navigate("/agent")}>
+                  {(userRole === "agent" || userRole === "admin") && (
+                    <DropdownMenuItem onClick={() => navigate("/agent-dashboard")}>
                       <Package className="mr-2 h-4 w-4" />
                       <span>Espace Agent</span>
+                    </DropdownMenuItem>
+                  )}
+                  {userRole === "admin" && (
+                    <DropdownMenuItem onClick={() => navigate("/admin")}>
+                      <Users className="mr-2 h-4 w-4" />
+                      <span>Espace Admin</span>
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
