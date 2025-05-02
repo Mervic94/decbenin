@@ -6,17 +6,22 @@ import { EmptyRequestState } from "./EmptyRequestState";
 
 interface RequestsListProps {
   requests: MoveRequest[];
+  showAgentName?: boolean;
 }
 
-export const RequestsList = ({ requests }: RequestsListProps) => {
+export const RequestsList = ({ requests, showAgentName = false }: RequestsListProps) => {
   if (requests.length === 0) {
     return <EmptyRequestState />;
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       {requests.map((request) => (
-        <RequestCard key={request.id} request={request} />
+        <RequestCard 
+          key={request.id} 
+          request={request} 
+          showAgentName={showAgentName}
+        />
       ))}
     </div>
   );

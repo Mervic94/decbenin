@@ -31,7 +31,7 @@ export const useRequests = () => useContext(RequestContext);
 
 export const RequestProvider = ({ children }: { children: ReactNode }) => {
   const { user } = useAuth();
-  // Use our custom hooks
+  // Utiliser nos hooks personnalisés
   const { 
     requests,
     addRequest, 
@@ -40,6 +40,7 @@ export const RequestProvider = ({ children }: { children: ReactNode }) => {
     getRequestById 
   } = useRequestRepository();
   
+  // Créer une instance modifiée de useRequestOperations qui a accès à getAllRequests
   const { 
     createRequest, 
     updateRequestStatus, 
@@ -62,7 +63,7 @@ export const RequestProvider = ({ children }: { children: ReactNode }) => {
     user?.role
   );
 
-  // Fetch requests from Supabase when available
+  // Récupérer les demandes depuis Supabase lorsque disponible
   useEffect(() => {
     if (user) {
       refreshRequests();
@@ -71,16 +72,15 @@ export const RequestProvider = ({ children }: { children: ReactNode }) => {
 
   const refreshRequests = async () => {
     try {
-      // In a real implementation, this would fetch from Supabase
-      // For now, using mock data
-      console.log('Refreshing requests data');
+      // Dans une implémentation réelle, cela récupérerait depuis Supabase
+      console.log('Rafraîchissement des données de demandes');
       
-      // This is where you would fetch from Supabase in a real implementation
+      // C'est ici que vous récupéreriez depuis Supabase dans une implémentation réelle
       // const { data, error } = await supabase.from('requests').select('*');
       // if (error) throw error;
       // setRequests(data);
     } catch (error) {
-      console.error('Error fetching requests:', error);
+      console.error('Erreur lors de la récupération des demandes:', error);
     }
   };
 

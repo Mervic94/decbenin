@@ -6,9 +6,10 @@ import { Profile } from "@/types";
 
 interface DashboardHeaderProps {
   fullName: string | undefined;
+  isAgent?: boolean;
 }
 
-export const DashboardHeader = ({ fullName }: DashboardHeaderProps) => {
+export const DashboardHeader = ({ fullName, isAgent = false }: DashboardHeaderProps) => {
   const navigate = useNavigate();
   
   return (
@@ -19,9 +20,11 @@ export const DashboardHeader = ({ fullName }: DashboardHeaderProps) => {
           Bienvenue, {fullName || "Utilisateur"}
         </p>
       </div>
-      <Button onClick={() => navigate("/quote")}>
-        <Plus className="mr-2 h-4 w-4" /> Nouvelle demande
-      </Button>
+      {!isAgent && (
+        <Button onClick={() => navigate("/quote")}>
+          <Plus className="mr-2 h-4 w-4" /> Nouvelle demande
+        </Button>
+      )}
     </div>
   );
 };

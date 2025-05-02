@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { RequestProvider } from "@/context/RequestContext";
+import { CookieConsent } from "@/components/CookieConsent";
 
 // Pages
 import Index from "./pages/Index";
@@ -47,6 +48,7 @@ const App = () => (
               <Route path="/organiser-demenagement" element={<OrganiserDemenagement />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <CookieConsent />
           </BrowserRouter>
         </TooltipProvider>
       </RequestProvider>
