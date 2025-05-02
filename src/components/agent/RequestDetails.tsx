@@ -1,21 +1,19 @@
 
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CheckIcon, MessageSquareIcon, UserPlusIcon, XIcon } from "lucide-react";
-import { TransferIcon } from "@/utils/icons";
 import { MoveRequest, Message } from "@/types";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { RequestAddressDetails } from "./RequestAddressDetails";
+import { RequestMessagesList } from "./RequestMessagesList";
+import { RequestActionsFooter } from "./RequestActionsFooter";
 
 interface RequestDetailsProps {
   isOpen: boolean;
@@ -77,28 +75,8 @@ export const RequestDetails = ({
           </div>
 
           <Separator />
-
-          <div className="space-y-2">
-            <h3 className="font-medium">Adresse de départ</h3>
-            <div className="bg-muted rounded-md p-3">
-              <p>{selectedRequest.pickupAddress.street}</p>
-              <p>
-                {selectedRequest.pickupAddress.city}, {selectedRequest.pickupAddress.zipCode}
-              </p>
-              <p>{selectedRequest.pickupAddress.country}</p>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="font-medium">Adresse de destination</h3>
-            <div className="bg-muted rounded-md p-3">
-              <p>{selectedRequest.deliveryAddress.street}</p>
-              <p>
-                {selectedRequest.deliveryAddress.city}, {selectedRequest.deliveryAddress.zipCode}
-              </p>
-              <p>{selectedRequest.deliveryAddress.country}</p>
-            </div>
-          </div>
+          
+          <RequestAddressDetails selectedRequest={selectedRequest} />
 
           <Separator />
 
@@ -120,99 +98,23 @@ export const RequestDetails = ({
 
           <Separator />
 
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-medium">Messages avec le client</h3>
-              {canMessage && (
-                <Button 
-                  size="sm" 
-                  onClick={() => prepareRequestAction(selectedRequest, "approve")}
-                >
-                  <MessageSquareIcon className="mr-2 h-4 w-4" />
-                  Nouveau message
-                </Button>
-              )}
-            </div>
-            
-            {messages.length > 0 ? (
-              <div className="space-y-3">
-                {messages.map((message) => (
-                  <div 
-                    key={message.id}
-                    className={`flex gap-3 ${message.sender_id === user?.id ? "justify-end" : "justify-start"}`}
-                  >
-                    {message.sender_id !== user?.id && (
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback>
-                          {message.sender_id === selectedRequest.user_id ? "CL" : "AG"}
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                    <div 
-                      className={`rounded-lg p-3 max-w-[80%] ${
-                        message.sender_id === user?.id 
-                          ? "bg-primary text-primary-foreground" 
-                          : "bg-muted"
-                      }`}
-                    >
-                      <p className="text-sm">{message.content}</p>
-                      <p className="text-xs mt-1 opacity-70">
-                        {format(new Date(message.created_at), "HH:mm", { locale: fr })}
-                      </p>
-                    </div>
-                    {message.sender_id === user?.id && (
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback>AG</AvatarFallback>
-                      </Avatar>
-                    )}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-center text-sm text-muted-foreground py-4">
-                Aucun message pour cette demande
-              </p>
-            )}
-          </div>
+          <RequestMessagesList 
+            messages={messages} 
+            user={user} 
+            selectedRequest={selectedRequest} 
+            canMessage={canMessage}
+            prepareRequestAction={prepareRequestAction}
+          />
         </div>
 
-        <DialogFooter className="flex-wrap gap-2">
-          {!isAssigned && (
-            <Button
-              variant="secondary"
-              onClick={() => prepareRequestAction(selectedRequest, "assign")}
-            >
-              <UserPlusIcon className="mr-2 h-4 w-4" />
-              S'assigner cette demande
-            </Button>
-          )}
-          
-          {isAssignedToCurrentAgent && (
-            <Button
-              variant="outline"
-              onClick={() => prepareRequestAction(selectedRequest, "transfer")}
-            >
-              <TransferIcon className="mr-2 h-4 w-4" />
-              Transférer
-            </Button>
-          )}
-          
-          {canApprove && (
-            <>
-              <Button
-                variant="outline"
-                onClick={() => prepareRequestAction(selectedRequest, "decline")}
-              >
-                <XIcon className="mr-2 h-4 w-4" />
-                Refuser
-              </Button>
-              <Button onClick={() => prepareRequestAction(selectedRequest, "approve")}>
-                <CheckIcon className="mr-2 h-4 w-4" />
-                Approuver
-              </Button>
-            </>
-          )}
-        </DialogFooter>
+        <RequestActionsFooter 
+          selectedRequest={selectedRequest}
+          user={user}
+          prepareRequestAction={prepareRequestAction}
+          isAssigned={isAssigned}
+          isAssignedToCurrentAgent={isAssignedToCurrentAgent}
+          canApprove={canApprove}
+        />
       </DialogContent>
     </Dialog>
   );

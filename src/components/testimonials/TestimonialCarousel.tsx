@@ -11,10 +11,23 @@ import {
   CarouselPrevious
 } from "@/components/ui/carousel";
 import { TestimonialCard } from "./TestimonialCard";
+import { useEffect, useState } from "react";
 
 export function TestimonialCarousel() {
   const { user } = useAuth();
   const { testimonials, userTestimonial, isSubmitting, submitTestimonial } = useTestimonials();
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  // Auto-advance carousel every 5 seconds
+  useEffect(() => {
+    if (testimonials.length <= 1) return;
+    
+    const interval = setInterval(() => {
+      setActiveIndex((current) => (current + 1) % testimonials.length);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, [testimonials.length]);
 
   return (
     <div className="py-16 bg-gray-50">
@@ -27,24 +40,44 @@ export function TestimonialCarousel() {
               opts={{
                 align: "start",
                 loop: true,
+                startIndex: activeIndex
               }}
               className="w-full"
+              setApi={(api) => {
+                if (api) {
+                  api.scrollTo(activeIndex);
+                }
+              }}
             >
               <CarouselContent>
                 {testimonials.map((testimonial) => (
                   <CarouselItem key={testimonial.id} className="md:basis-1/2 lg:basis-1/3">
-                    <TestimonialCard 
-                      comment={testimonial.comment} 
-                      fullName={testimonial.profiles?.full_name}
-                    />
+                    <div className="p-1">
+                      <TestimonialCard 
+                        comment={testimonial.comment} 
+                        fullName={testimonial.profiles?.full_name}
+                      />
+                    </div>
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <div className="flex justify-center mt-4">
+              <div className="flex justify-center mt-6 gap-4">
                 <CarouselPrevious className="relative static" />
                 <CarouselNext className="relative static" />
               </div>
             </Carousel>
+            <div className="flex justify-center mt-4 gap-2">
+              {testimonials.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-3 h-3 rounded-full ${
+                    index === activeIndex ? "bg-primary" : "bg-gray-300"
+                  }`}
+                  onClick={() => setActiveIndex(index)}
+                  aria-label={`Aller au témoignage ${index + 1}`}
+                />
+              ))}
+            </div>
           </div>
         ) : (
           <TestimonialList testimonials={testimonials} />
