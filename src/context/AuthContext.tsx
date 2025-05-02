@@ -101,10 +101,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (
         (email === 'client@moveit.com' && password === 'demopass123') ||
         (email === 'agent@moveit.com' && password === 'demopass123') ||
+        (email === 'moderator@moveit.com' && password === 'demopass123') ||
         (email === 'admin@moveit.com' && password === 'demopass123')
       ) {
-        const mockRole = email.includes('client') ? 'user' : email.includes('agent') ? 'agent' : 'admin' as UserRole;
-        const mockId = email.includes('client') ? 'client-demo-id' : email.includes('agent') ? 'agent-demo-id' : 'admin-demo-id';
+        let mockRole: UserRole = "user";
+        if (email.includes('admin')) mockRole = "admin";
+        else if (email.includes('moderator')) mockRole = "moderator";
+        else if (email.includes('agent')) mockRole = "agent";
+        
+        const mockId = email.includes('client') ? 'client-demo-id' : 
+                      email.includes('agent') ? 'agent-demo-id' : 
+                      email.includes('moderator') ? 'moderator-demo-id' : 'admin-demo-id';
         
         // Create mock user and profile
         const mockUser = {
@@ -117,7 +124,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         
         const mockProfile = {
           id: mockId,
-          full_name: email.includes('client') ? 'Client Demo' : email.includes('agent') ? 'Agent Demo' : 'Admin Demo',
+          full_name: email.includes('client') ? 'Client Demo' : 
+                    email.includes('agent') ? 'Agent Demo' : 
+                    email.includes('moderator') ? 'Moderator Demo' : 'Admin Demo',
           created_at: new Date().toISOString()
         } as Profile;
         

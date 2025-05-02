@@ -12,6 +12,9 @@ import {
 } from "@/components/ui/carousel";
 import { TestimonialCard } from "./TestimonialCard";
 import { useEffect, useState } from "react";
+import { Button } from "../ui/button";
+import { LogIn } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function TestimonialCarousel() {
   const { user } = useAuth();
@@ -91,9 +94,17 @@ export function TestimonialCarousel() {
         )}
 
         {!user && (
-          <p className="text-center text-gray-600">
-            Connectez-vous pour partager votre expérience.
-          </p>
+          <div className="text-center max-w-md mx-auto">
+            <p className="mb-4 text-gray-600">
+              Connectez-vous pour partager votre expérience avec notre service.
+            </p>
+            <Button asChild>
+              <Link to="/login">
+                <LogIn className="mr-2 h-4 w-4" />
+                Se connecter pour laisser un avis
+              </Link>
+            </Button>
+          </div>
         )}
 
         {user && userTestimonial && (

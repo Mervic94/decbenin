@@ -1,15 +1,21 @@
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ReactNode } from "react";
 import { MoveRequest } from "@/types";
 import { RequestList } from "./RequestList";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface AgentDashboardTabsProps {
   activeTab: string;
-  setActiveTab: (value: string) => void;
+  setActiveTab: (tab: string) => void;
   pendingRequests: MoveRequest[];
   assignedRequests: MoveRequest[];
   declinedRequests: MoveRequest[];
   openDetails: (request: MoveRequest) => void;
+  customActions?: {
+    pending?: (request: MoveRequest) => ReactNode;
+    assigned?: (request: MoveRequest) => ReactNode;
+    declined?: (request: MoveRequest) => ReactNode;
+  };
 }
 
 export const AgentDashboardTabs = ({
@@ -18,37 +24,47 @@ export const AgentDashboardTabs = ({
   pendingRequests,
   assignedRequests,
   declinedRequests,
-  openDetails
+  openDetails,
+  customActions
 }: AgentDashboardTabsProps) => {
   return (
-    <Tabs defaultValue="pending" value={activeTab} onValueChange={setActiveTab}>
-      <TabsList className="mb-6">
-        <TabsTrigger value="pending">En attente ({pendingRequests.length})</TabsTrigger>
-        <TabsTrigger value="assigned">Mes demandes ({assignedRequests.length})</TabsTrigger>
-        <TabsTrigger value="declined">Refusées ({declinedRequests.length})</TabsTrigger>
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+      <TabsList className="grid grid-cols-3 mb-4">
+        <TabsTrigger value="pending">
+          En attente ({pendingRequests.length})
+        </TabsTrigger>
+        <TabsTrigger value="assigned">
+          Assignées ({assignedRequests.length})
+        </TabsTrigger>
+        <TabsTrigger value="declined">
+          Refusées ({declinedRequests.length})
+        </TabsTrigger>
       </TabsList>
-      
+
       <TabsContent value="pending">
-        <RequestList 
-          requests={pendingRequests} 
-          openDetails={openDetails} 
-          emptyMessage="Aucune demande en attente" 
+        <RequestList
+          requests={pendingRequests}
+          onRequestClick={openDetails}
+          emptyMessage="Aucune demande en attente"
+          customAction={customActions?.pending}
         />
       </TabsContent>
-      
+
       <TabsContent value="assigned">
-        <RequestList 
-          requests={assignedRequests} 
-          openDetails={openDetails} 
-          emptyMessage="Aucune demande assignée" 
+        <RequestList
+          requests={assignedRequests}
+          onRequestClick={openDetails}
+          emptyMessage="Aucune demande assignée"
+          customAction={customActions?.assigned}
         />
       </TabsContent>
-      
+
       <TabsContent value="declined">
-        <RequestList 
+        <RequestList
           requests={declinedRequests}
-          openDetails={openDetails}
+          onRequestClick={openDetails}
           emptyMessage="Aucune demande refusée"
+          customAction={customActions?.declined}
         />
       </TabsContent>
     </Tabs>

@@ -1,34 +1,38 @@
 
-import { TruckIcon } from "lucide-react";
+import { ReactNode } from "react";
 import { MoveRequest } from "@/types";
-import { Card, CardContent } from "@/components/ui/card";
 import { RequestCard } from "./RequestCard";
 
 interface RequestListProps {
   requests: MoveRequest[];
-  openDetails: (request: MoveRequest) => void;
-  emptyMessage: string;
+  onRequestClick: (request: MoveRequest) => void;
+  emptyMessage?: string;
+  customAction?: (request: MoveRequest) => ReactNode;
 }
 
-export const RequestList = ({ requests, openDetails, emptyMessage }: RequestListProps) => {
+export const RequestList = ({
+  requests,
+  onRequestClick,
+  emptyMessage = "Aucune demande",
+  customAction
+}: RequestListProps) => {
   if (requests.length === 0) {
     return (
-      <Card className="bg-muted">
-        <CardContent className="flex flex-col items-center justify-center py-8">
-          <TruckIcon className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-medium mb-2">{emptyMessage}</h3>
-          <p className="text-muted-foreground text-center">
-            Aucune demande disponible
-          </p>
-        </CardContent>
-      </Card>
+      <div className="flex justify-center p-8 text-muted-foreground">
+        {emptyMessage}
+      </div>
     );
   }
 
   return (
-    <div>
+    <div className="space-y-4">
       {requests.map((request) => (
-        <RequestCard key={request.id} request={request} openDetails={openDetails} />
+        <RequestCard
+          key={request.id}
+          request={request}
+          onClick={() => onRequestClick(request)}
+          customAction={customAction ? customAction(request) : undefined}
+        />
       ))}
     </div>
   );

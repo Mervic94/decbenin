@@ -1,191 +1,101 @@
+
 import { Layout, PageContainer } from "@/components/Layout";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
-import { Truck, Calendar, Package, User, Check, FileText, Home } from "lucide-react";
+import { Link } from "react-router-dom";
+import { TruckIcon } from "lucide-react";
 import { TestimonialCarousel } from "@/components/testimonials/TestimonialCarousel";
 
-const Index = () => {
-  const navigate = useNavigate();
-
+const Home = () => {
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="bg-primary py-20 px-4 text-primary-foreground">
-        <div className="container mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Déménagement Express Cotonou
-          </h1>
-          <p className="text-xl md:text-2xl mb-10 max-w-3xl mx-auto">
-            Votre partenaire de confiance pour un déménagement sans stress partout au Bénin
-          </p>
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button 
-              size="lg" 
-              className="bg-secondary hover:bg-demenagement-lightOrange text-white"
-              onClick={() => navigate("/quote")}
-            >
-              Demander un devis
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="text-white border-white hover:bg-white/10"
-              onClick={() => navigate("/services")}
-            >
-              Nos services
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-16 bg-gray-50">
+      <div className="relative bg-gradient-to-r from-blue-500 to-purple-600 text-white py-24">
         <PageContainer>
-          <h2 className="text-3xl font-bold text-center mb-12">Comment ça marche</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <Calendar className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">1. Planifiez</h3>
-              <p className="text-gray-600">
-                Remplissez notre formulaire de devis en ligne et choisissez une date qui vous convient.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <Check className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">2. Confirmez</h3>
-              <p className="text-gray-600">
-                Un de nos agents vous contactera pour confirmer les détails et finaliser votre réservation.
-              </p>
-            </div>
-            <div className="bg-white p-6 rounded-lg shadow-md text-center">
-              <div className="w-16 h-16 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
-                <Truck className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">3. Déménagez</h3>
-              <p className="text-gray-600">
-                Notre équipe professionnelle s'occupe de tout le jour du déménagement.
-              </p>
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="text-4xl md:text-6xl font-bold mb-6">
+              Votre déménagement en toute sérénité
+            </h1>
+            <p className="text-xl mb-8">
+              Solutions de déménagement personnalisées pour les particuliers et les entreprises
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button size="lg" asChild className="bg-white text-blue-600 hover:bg-gray-100">
+                <Link to="/request">Demander un devis</Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild className="text-white border-white hover:bg-white/10">
+                <Link to="/services">Nos services</Link>
+              </Button>
             </div>
           </div>
         </PageContainer>
-      </section>
+      </div>
 
-      {/* Testimonials Section */}
+      <PageContainer>
+        <div className="py-16">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold mb-4">Pourquoi nous choisir ?</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Notre expertise et notre engagement envers l'excellence font de nous le partenaire idéal pour votre déménagement
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                <TruckIcon className="w-6 h-6 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Service personnalisé</h3>
+              <p className="text-gray-600">
+                Chaque déménagement est unique, c'est pourquoi nous adaptons nos services à vos besoins spécifiques.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <TruckIcon className="w-6 h-6 text-green-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Équipe expérimentée</h3>
+              <p className="text-gray-600">
+                Notre équipe de professionnels qualifiés assure un déménagement rapide et sans stress.
+              </p>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-md">
+              <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                <TruckIcon className="w-6 h-6 text-purple-600" />
+              </div>
+              <h3 className="text-xl font-semibold mb-2">Prix transparents</h3>
+              <p className="text-gray-600">
+                Des devis clairs et détaillés, sans frais cachés pour une parfaite tranquillité d'esprit.
+              </p>
+            </div>
+          </div>
+
+          <div className="text-center mt-12">
+            <Button size="lg" asChild>
+              <Link to="/services">Découvrir nos services</Link>
+            </Button>
+          </div>
+        </div>
+      </PageContainer>
+
+      {/* Testimonials Section - Visible to everyone */}
       <TestimonialCarousel />
 
-      {/* Resources */}
-      <section className="py-16 bg-white">
-        <PageContainer>
-          <h2 className="text-3xl font-bold text-center mb-12">Ressources pour votre déménagement</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col items-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <FileText className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Checklist de déménagement</h3>
-              <p className="text-gray-600 text-center mb-6">
-                Ne rien oublier lors de votre déménagement grâce à notre checklist complète.
-              </p>
-              <Button onClick={() => navigate("/checklist-demenagement")}>
-                Voir la checklist
-              </Button>
-            </div>
-            <div className="bg-gray-50 p-6 rounded-lg shadow-md flex flex-col items-center">
-              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-4">
-                <Home className="h-8 w-8 text-primary" />
-              </div>
-              <h3 className="text-xl font-semibold mb-3">Organiser son déménagement</h3>
-              <p className="text-gray-600 text-center mb-6">
-                Conseils et astuces pour organiser et planifier votre déménagement efficacement.
-              </p>
-              <Button onClick={() => navigate("/organiser-demenagement")}>
-                Découvrir les conseils
-              </Button>
-            </div>
-          </div>
-        </PageContainer>
-      </section>
-
-      {/* Services */}
-      <section className="py-16 bg-gray-50">
-        <PageContainer>
-          <h2 className="text-3xl font-bold text-center mb-12">Nos Services</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="flex items-start">
-              <div className="mt-1 mr-4 bg-primary p-2 rounded-full">
-                <Truck className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Déménagement résidentiel</h3>
-                <p className="text-gray-600">
-                  Que vous déménagiez d'un studio ou d'une grande maison, nous adaptons nos services à vos besoins spécifiques.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <div className="mt-1 mr-4 bg-primary p-2 rounded-full">
-                <Package className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Emballage professionnel</h3>
-                <p className="text-gray-600">
-                  Notre équipe utilise des matériaux de qualité pour emballer et protéger vos biens pendant le transport.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <div className="mt-1 mr-4 bg-primary p-2 rounded-full">
-                <User className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Déménagement commercial</h3>
-                <p className="text-gray-600">
-                  Minimisez les perturbations de votre entreprise avec nos services de déménagement de bureau efficaces.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start">
-              <div className="mt-1 mr-4 bg-primary p-2 rounded-full">
-                <Package className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-semibold mb-2">Stockage sécurisé</h3>
-                <p className="text-gray-600">
-                  Besoin de stocker vos affaires? Nous offrons des solutions de stockage sécurisées à court et long terme.
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="text-center mt-10">
-            <Button onClick={() => navigate("/services")}>
-              Voir tous nos services
+      <PageContainer>
+        <div className="py-16 bg-gray-50 -mx-4 px-4">
+          <div className="max-w-3xl mx-auto text-center">
+            <h2 className="text-3xl font-bold mb-6">Prêt à déménager ?</h2>
+            <p className="text-xl text-gray-600 mb-8">
+              Contactez-nous dès aujourd'hui pour un devis gratuit et sans engagement
+            </p>
+            <Button size="lg" asChild>
+              <Link to="/request">Demander un devis gratuit</Link>
             </Button>
           </div>
-        </PageContainer>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-16 bg-primary text-primary-foreground">
-        <div className="container mx-auto text-center px-4">
-          <h2 className="text-3xl font-bold mb-6">Prêt à déménager?</h2>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
-            Obtenez un devis gratuit et planifiez votre déménagement avec Déménagement Express Cotonou dès aujourd'hui.
-          </p>
-          <Button 
-            size="lg" 
-            className="bg-secondary hover:bg-demenagement-lightOrange text-white"
-            onClick={() => navigate("/quote")}
-          >
-            Demander un devis
-          </Button>
         </div>
-      </section>
+      </PageContainer>
     </Layout>
   );
 };
 
-export default Index;
+export default Home;
