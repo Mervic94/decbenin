@@ -12,16 +12,16 @@ const Home = () => {
         <PageContainer>
           <div className="max-w-3xl mx-auto text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Votre déménagement en toute sérénité
+              Déménagement Express Cotonou
             </h1>
             <p className="text-xl mb-8">
-              Solutions de déménagement personnalisées pour les particuliers et les entreprises
+              Votre partenaire de confiance pour un déménagement sans stress partout au Bénin et à l'international
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" asChild className="bg-white text-blue-600 hover:bg-gray-100">
+              <Button size="lg" asChild className="bg-white text-blue-600 hover:bg-gray-100 transition-all transform hover:scale-105">
                 <Link to="/request">Demander un devis</Link>
               </Button>
-              <Button size="lg" variant="outline" asChild className="text-white border-white hover:bg-white/10">
+              <Button size="lg" variant="outline" asChild className="text-white border-white hover:bg-white/10 transition-all transform hover:scale-105">
                 <Link to="/services">Nos services</Link>
               </Button>
             </div>
@@ -71,7 +71,7 @@ const Home = () => {
           </div>
 
           <div className="text-center mt-12">
-            <Button size="lg" asChild>
+            <Button size="lg" asChild className="transition-all transform hover:scale-105">
               <Link to="/services">Découvrir nos services</Link>
             </Button>
           </div>
@@ -88,7 +88,7 @@ const Home = () => {
             <p className="text-xl text-gray-600 mb-8">
               Contactez-nous dès aujourd'hui pour un devis gratuit et sans engagement
             </p>
-            <Button size="lg" asChild>
+            <Button size="lg" asChild className="transition-all transform hover:scale-105">
               <Link to="/request">Demander un devis gratuit</Link>
             </Button>
           </div>

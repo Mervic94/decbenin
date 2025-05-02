@@ -27,12 +27,16 @@ export const RequestList = ({
   return (
     <div className="space-y-4">
       {requests.map((request) => (
-        <RequestCard
+        <div
           key={request.id}
-          request={request}
           onClick={() => onRequestClick(request)}
-          customAction={customAction ? customAction(request) : undefined}
-        />
+          className="cursor-pointer"
+        >
+          <RequestCard
+            request={request}
+            customAction={customAction ? customAction(request) : undefined}
+          />
+        </div>
       ))}
     </div>
   );

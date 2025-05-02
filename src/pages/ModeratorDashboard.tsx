@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Layout, PageContainer } from "@/components/Layout";
 import { useAgentDashboard } from "@/hooks/useAgentDashboard";
@@ -184,7 +183,7 @@ const ModeratorDashboard = () => {
                   <SelectContent>
                     {agentList.map((agent) => (
                       <SelectItem key={agent.id} value={agent.id}>
-                        {agent.name}
+                        {agent.full_name}
                       </SelectItem>
                     ))}
                   </SelectContent>
