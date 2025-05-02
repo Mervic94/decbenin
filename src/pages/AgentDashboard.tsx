@@ -10,6 +10,9 @@ import { TransferDialog } from "@/components/agent/TransferDialog";
 import { AgentDashboardStats } from "@/components/agent/AgentDashboardStats";
 import { AgentDashboardHeader } from "@/components/agent/AgentDashboardHeader";
 import { AgentDashboardTabs } from "@/components/agent/AgentDashboardTabs";
+import { QuoteRequestModal } from "@/components/agent/QuoteRequestModal";
+import { Button } from "@/components/ui/button";
+import { FileText } from "lucide-react";
 
 const AgentDashboard = () => {
   const {
@@ -37,13 +40,18 @@ const AgentDashboard = () => {
     messages,
     activeTab,
     setActiveTab,
+    isQuoteRequestModalOpen,
+    setIsQuoteRequestModalOpen,
+    quoteFormData,
+    setQuoteFormData,
     openDetails,
     prepareRequestAction,
     executeRequestAction,
     sendMessage,
     getStatusBadge,
     getAssignmentBadge,
-    refreshRequests
+    refreshRequests,
+    handleQuoteSubmit
   } = useAgentDashboard();
 
   if (!user || (user.role !== "agent" && user.role !== "admin")) return null;
@@ -57,11 +65,20 @@ const AgentDashboard = () => {
             onRefresh={refreshRequests} 
           />
 
-          <AgentDashboardStats 
-            pendingRequests={pendingRequests}
-            assignedRequests={assignedRequests}
-            declinedRequests={declinedRequests}
-          />
+          <div className="flex items-center justify-between mt-6 mb-8">
+            <AgentDashboardStats 
+              pendingRequests={pendingRequests}
+              assignedRequests={assignedRequests}
+              declinedRequests={declinedRequests}
+            />
+            <Button 
+              onClick={() => setIsQuoteRequestModalOpen(true)}
+              className="ml-4 whitespace-nowrap"
+            >
+              <FileText className="mr-2 h-4 w-4" />
+              Nouvelle demande de devis
+            </Button>
+          </div>
 
           <AgentDashboardTabs 
             activeTab={activeTab}
@@ -113,6 +130,15 @@ const AgentDashboard = () => {
           setTransferAgentId={setTransferAgentId}
           agentList={agentList}
           userId={user?.id}
+        />
+
+        <QuoteRequestModal
+          isOpen={isQuoteRequestModalOpen}
+          onOpenChange={setIsQuoteRequestModalOpen}
+          quoteFormData={quoteFormData}
+          setQuoteFormData={setQuoteFormData}
+          isSubmitting={isSubmitting}
+          handleQuoteSubmit={handleQuoteSubmit}
         />
       </PageContainer>
     </Layout>

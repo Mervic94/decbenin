@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useRequests } from "@/context/request";
@@ -14,6 +14,7 @@ export const useAgentData = () => {
     refreshRequests
   } = useRequests();
   const navigate = useNavigate();
+  const [agentList, setAgentList] = useState<{ id: string, full_name: string }[]>([]);
 
   // Redirect if not authenticated or not an agent
   useEffect(() => {
@@ -22,6 +23,8 @@ export const useAgentData = () => {
     } else if (user?.role !== "agent" && user?.role !== "admin") {
       navigate("/dashboard");
     } else {
+      // Fetch agents list for transfer feature
+      fetchAgents();
       // Refresh requests data
       refreshRequests();
     }
@@ -30,6 +33,20 @@ export const useAgentData = () => {
   const pendingRequests = getPendingRequests();
   const assignedRequests = getAssignedRequests();
   const declinedRequests = requests.filter((req) => req.status === "declined");
+
+  // Function to fetch available agents
+  const fetchAgents = async () => {
+    try {
+      // Dans une vraie implémentation, ceci récupérerait depuis Supabase
+      setAgentList([
+        { id: "agent1", full_name: "Agent 1" },
+        { id: "agent2", full_name: "Agent 2" },
+        { id: "agent3", full_name: "Agent 3" },
+      ]);
+    } catch (error) {
+      console.error("Error fetching agents:", error);
+    }
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -64,6 +81,7 @@ export const useAgentData = () => {
     pendingRequests,
     assignedRequests,
     declinedRequests,
+    agentList,
     getStatusBadge,
     getAssignmentBadge,
     refreshRequests

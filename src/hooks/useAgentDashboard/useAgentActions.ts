@@ -18,27 +18,50 @@ export const useAgentActions = (
   selectedRequest: MoveRequest | null,
   pendingAction: "approve" | "decline" | "assign" | "transfer" | null,
   messageContent: string,
-  setMessageContent: (content: string) => void
+  setMessageContent: (content: string) => void,
+  setIsQuoteRequestModalOpen: (isOpen: boolean) => void
 ) => {
   const { user } = useAuth();
-  const { 
-    updateRequestStatus, 
-    assignRequestToAgent,
-    transferRequestToAgent,
-    refreshRequests
-  } = useRequests();
+  const { updateRequestStatus, assignRequestToAgent, transferRequestToAgent, refreshRequests, createRequest } = useRequests();
 
   const openDetails = (request: MoveRequest) => {
     setSelectedRequest(request);
     setIsDetailsOpen(true);
-    if (request.id) {
-      fetchMessages(request.id);
-    }
+    fetchMessages(request.id);
   };
 
   const closeDetails = () => {
     setIsDetailsOpen(false);
-    setTimeout(() => setSelectedRequest(null), 300);
+    setTimeout(() => {
+      setSelectedRequest(null);
+      setMessages([]);
+    }, 200);
+  };
+
+  const fetchMessages = async (requestId: string) => {
+    // Simulate API call to get messages for this request
+    try {
+      // Dans une vraie implémentation, ceci récupérerait depuis Supabase
+      const mockMessages = [
+        {
+          id: "msg1",
+          request_id: requestId,
+          sender_id: user?.id,
+          content: "Bonjour, je suis l'agent assigné à votre demande de déménagement.",
+          created_at: new Date(Date.now() - 3600000).toISOString(),
+        },
+        {
+          id: "msg2",
+          request_id: requestId,
+          sender_id: "client-id", // This would be the actual client ID
+          content: "Merci pour votre aide. J'ai quelques questions concernant le processus.",
+          created_at: new Date(Date.now() - 1800000).toISOString(),
+        },
+      ];
+      setMessages(mockMessages);
+    } catch (error) {
+      console.error("Error fetching messages:", error);
+    }
   };
 
   const prepareRequestAction = (
@@ -58,40 +81,40 @@ export const useAgentActions = (
   };
 
   const executeRequestAction = async () => {
-    if (!selectedRequest || !pendingAction) return;
-
+    if (!selectedRequest || !pendingAction || !user) return;
+    
     setIsSubmitting(true);
+    
     try {
       let success = false;
+      let actionText = "";
       
       switch (pendingAction) {
         case "approve":
           success = await updateRequestStatus(selectedRequest.id, "approved");
+          actionText = "approuvée";
           break;
         case "decline":
           success = await updateRequestStatus(selectedRequest.id, "declined");
+          actionText = "refusée";
           break;
         case "assign":
-          success = await assignRequestToAgent(selectedRequest.id);
+          success = await assignRequestToAgent(selectedRequest.id, user.id);
+          actionText = "assignée";
           break;
         case "transfer":
-          if (!transferAgentId) {
-            toast.error("Veuillez sélectionner un agent");
+          if (transferAgentId) {
+            success = await transferRequestToAgent(selectedRequest.id, transferAgentId);
+            actionText = "transférée";
+          } else {
+            toast.error("Veuillez sélectionner un agent pour le transfert");
             setIsSubmitting(false);
             return;
           }
-          success = await transferRequestToAgent(selectedRequest.id, transferAgentId);
           break;
       }
-
+      
       if (success) {
-        const actionText = {
-          approve: "approuvée",
-          decline: "refusée",
-          assign: "assignée",
-          transfer: "transférée"
-        }[pendingAction];
-        
         toast.success(`La demande a été ${actionText} avec succès`);
         
         setIsConfirmOpen(false);
@@ -101,39 +124,31 @@ export const useAgentActions = (
         // Refresh data
         refreshRequests();
       } else {
-        toast.error("Une erreur est survenue lors du traitement de la demande");
+        toast.error("Une erreur est survenue lors de la mise à jour de la demande");
       }
     } catch (error) {
-      toast.error("Une erreur est survenue lors du traitement de la demande");
+      console.error("Error executing action:", error);
+      toast.error("Une erreur est survenue lors de la mise à jour de la demande");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const sendMessage = async () => {
-    if (!selectedRequest || !messageContent.trim()) {
-      toast.error("Veuillez saisir un message");
-      return;
-    }
-
+    if (!selectedRequest || !messageContent.trim() || !user) return;
+    
     setIsSubmitting(true);
+    
     try {
-      // Dans une vraie implémentation, ceci insérerait dans Supabase
-      console.log("Sending message:", {
-        request_id: selectedRequest.id,
-        sender_id: user?.id || "",
-        recipient_id: selectedRequest.user_id,
-        content: messageContent.trim(),
-      });
+      // Simulate API call to send a message
+      // Dans une vraie implémentation, ceci enverrait à Supabase
+      await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Simulation de succès pour la démonstration
       const newMessage = {
-        id: `new-${Date.now()}`,
+        id: `msg-${Date.now()}`,
         request_id: selectedRequest.id,
-        sender_id: user?.id || "",
-        recipient_id: selectedRequest.user_id,
-        content: messageContent.trim(),
-        read: false,
+        sender_id: user.id,
+        content: messageContent,
         created_at: new Date().toISOString(),
       };
       
@@ -141,40 +156,52 @@ export const useAgentActions = (
       setMessageContent("");
       setIsMessageModalOpen(false);
       
-      toast.success("Message envoyé au client");
+      toast.success("Message envoyé avec succès");
     } catch (error) {
+      console.error("Error sending message:", error);
       toast.error("Une erreur est survenue lors de l'envoi du message");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Function to fetch messages for a request
-  const fetchMessages = async (requestId: string) => {
+  const handleQuoteSubmit = async (formData: any) => {
+    if (!user) return false;
+    
+    setIsSubmitting(true);
+    
     try {
-      // Dans une vraie implémentation, ceci récupérerait depuis Supabase
-      setMessages([
-        {
-          id: "1",
-          request_id: requestId,
-          sender_id: "agent1",
-          recipient_id: selectedRequest?.user_id || "",
-          content: "Bonjour, je suis l'agent en charge de votre demande. Comment puis-je vous aider ?",
-          read: true,
-          created_at: new Date(Date.now() - 3600000).toISOString(),
-        },
-        {
-          id: "2",
-          request_id: requestId,
-          sender_id: selectedRequest?.user_id || "",
-          recipient_id: "agent1",
-          content: "Bonjour, je voudrais savoir quand ma demande sera traitée.",
-          read: true,
-          created_at: new Date(Date.now() - 1800000).toISOString(),
-        }
-      ]);
+      // Extract form data
+      const { pickupAddress, deliveryAddress, moveDate, description, items } = formData;
+      
+      // Convert items string to array
+      const itemsList = items.split(',').map((item: string) => item.trim()).filter(Boolean);
+      
+      // Create the request
+      const success = await createRequest(
+        pickupAddress,
+        deliveryAddress,
+        moveDate,
+        description,
+        itemsList
+      );
+      
+      if (success) {
+        toast.success("Demande de devis créée avec succès");
+        setIsQuoteRequestModalOpen(false);
+        // Refresh data
+        refreshRequests();
+        return true;
+      } else {
+        toast.error("Une erreur est survenue lors de la création de la demande de devis");
+        return false;
+      }
     } catch (error) {
-      console.error("Error fetching messages:", error);
+      console.error("Error creating quote request:", error);
+      toast.error("Une erreur est survenue lors de la création de la demande de devis");
+      return false;
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -184,6 +211,7 @@ export const useAgentActions = (
     prepareRequestAction,
     executeRequestAction,
     sendMessage,
-    fetchMessages
+    fetchMessages,
+    handleQuoteSubmit
   };
 };

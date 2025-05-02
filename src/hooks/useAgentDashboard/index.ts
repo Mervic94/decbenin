@@ -28,7 +28,11 @@ export const useAgentDashboard = () => {
     messages,
     setMessages,
     activeTab,
-    setActiveTab
+    setActiveTab,
+    isQuoteRequestModalOpen,
+    setIsQuoteRequestModalOpen,
+    quoteFormData,
+    setQuoteFormData
   } = useAgentDashboardState();
 
   const {
@@ -48,7 +52,8 @@ export const useAgentDashboard = () => {
     prepareRequestAction,
     executeRequestAction,
     sendMessage,
-    fetchMessages
+    fetchMessages,
+    handleQuoteSubmit
   } = useAgentActions(
     setSelectedRequest,
     setIsDetailsOpen,
@@ -63,7 +68,8 @@ export const useAgentDashboard = () => {
     selectedRequest,
     pendingAction,
     messageContent,
-    setMessageContent
+    setMessageContent,
+    setIsQuoteRequestModalOpen
   );
 
   return {
@@ -91,12 +97,17 @@ export const useAgentDashboard = () => {
     messages,
     activeTab,
     setActiveTab,
+    isQuoteRequestModalOpen,
+    setIsQuoteRequestModalOpen,
+    quoteFormData,
+    setQuoteFormData,
     openDetails,
     prepareRequestAction,
     executeRequestAction,
     sendMessage,
     getStatusBadge,
     getAssignmentBadge,
-    refreshRequests
+    refreshRequests,
+    handleQuoteSubmit
   };
 };
