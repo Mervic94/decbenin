@@ -9,6 +9,134 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          id: string
+          is_system: boolean | null
+          read: boolean | null
+          recipient_id: string | null
+          request_id: string
+          sender_id: string | null
+          user_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          id?: string
+          is_system?: boolean | null
+          read?: boolean | null
+          recipient_id?: string | null
+          request_id: string
+          sender_id?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_system?: boolean | null
+          read?: boolean | null
+          recipient_id?: string | null
+          request_id?: string
+          sender_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "messages_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "move_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      move_requests: {
+        Row: {
+          agent_id: string | null
+          approved_by: string | null
+          assigned_at: string | null
+          created_at: string | null
+          delivery_address: Json
+          description: string | null
+          id: string
+          items: string[] | null
+          move_date: string
+          pickup_address: Json
+          status: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_id?: string | null
+          approved_by?: string | null
+          assigned_at?: string | null
+          created_at?: string | null
+          delivery_address: Json
+          description?: string | null
+          id?: string
+          items?: string[] | null
+          move_date: string
+          pickup_address: Json
+          status?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          agent_id?: string | null
+          approved_by?: string | null
+          assigned_at?: string | null
+          created_at?: string | null
+          delivery_address?: Json
+          description?: string | null
+          id?: string
+          items?: string[] | null
+          move_date?: string
+          pickup_address?: Json
+          status?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          id: string
+          message: string
+          read: boolean | null
+          reference_id: string | null
+          title: string
+          type: string | null
+          user_id: string
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          message: string
+          read?: boolean | null
+          reference_id?: string | null
+          title: string
+          type?: string | null
+          user_id: string
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          id?: string
+          message?: string
+          read?: boolean | null
+          reference_id?: string | null
+          title?: string
+          type?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       posts: {
         Row: {
           content: string | null
@@ -74,7 +202,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_role: {
+        Args: { user_uuid: string }
+        Returns: string
+      }
     }
     Enums: {
       app_role: "user" | "agent" | "admin"

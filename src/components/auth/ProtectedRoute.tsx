@@ -1,37 +1,47 @@
-import { ReactNode } from "react";
-import { Navigate } from "react-router-dom";
+
 import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { UserRole } from "@/types";
 
 interface ProtectedRouteProps {
-  children: ReactNode;
-  requiredRole?: "admin" | "moderator" | "agent" | "user";
+  children: React.ReactNode;
+  requiredRole?: UserRole;
 }
 
-const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
-  const { isAuthenticated, isLoading, userRole } = useAuth();
-  
-  // Show loading state while authentication is being checked
-  if (isLoading) {
-    return <div className="flex items-center justify-center h-screen">Chargement...</div>;
-  }
+export const ProtectedRoute = ({ children, requiredRole }: ProtectedRouteProps) => {
+  const { user, loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  // If not authenticated, redirect to login
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
+  useEffect(() => {
+    if (!loading) {
+      if (!isAuthenticated) {
+        navigate("/login");
+        return;
+      }
 
-  // If role is required, check if user has the required role
-  if (requiredRole && userRole !== requiredRole) {
-    // If user is admin, they can access any page
-    if (userRole === "admin") {
-      return <>{children}</>;
+      if (requiredRole && user?.role !== requiredRole && user?.role !== "admin") {
+        navigate("/dashboard");
+        return;
+      }
     }
-    
-    // Otherwise, redirect to dashboard
-    return <Navigate to="/dashboard" replace />;
+  }, [isAuthenticated, loading, user, requiredRole, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
+  if (requiredRole && user?.role !== requiredRole && user?.role !== "admin") {
+    return null;
   }
 
   return <>{children}</>;
 };
-
-export default ProtectedRoute;

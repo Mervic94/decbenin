@@ -1,55 +1,38 @@
 
-import { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 import { User } from '@supabase/supabase-js';
 import { Profile, UserRole } from '@/types';
-import { useAuthState } from '@/hooks/auth/useAuthState';
-import { useAuthActions } from '@/hooks/auth/useAuthActions';
+import { useSupabaseAuth } from '@/hooks/useSupabaseAuth';
 
 interface AuthContextType {
-  user: User | null;
+  user: (User & { role?: UserRole }) | null;
   profile: Profile | null;
-  userRole: UserRole | null;
-  isLoading: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  loginWithGoogle: () => Promise<boolean>;
-  register: (name: string, email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  loading: boolean;
   isAuthenticated: boolean;
+  signIn: (email: string, password: string) => Promise<boolean>;
+  signUp: (email: string, password: string, fullName: string) => Promise<boolean>;
+  signOut: () => Promise<boolean>;
 }
 
-export const AuthContext = createContext<AuthContextType>({} as AuthContextType);
+const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const { 
-    user, 
-    profile, 
-    userRole, 
-    isLoading 
-  } = useAuthState();
-  
-  const { 
-    login, 
-    loginWithGoogle, 
-    register, 
-    logout 
-  } = useAuthActions(user?.id);
+interface AuthProviderProps {
+  children: ReactNode;
+}
+
+export const AuthProvider = ({ children }: AuthProviderProps) => {
+  const auth = useSupabaseAuth();
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        profile,
-        userRole,
-        isLoading,
-        login,
-        loginWithGoogle,
-        register,
-        logout,
-        isAuthenticated: !!user,
-      }}
-    >
+    <AuthContext.Provider value={auth}>
       {children}
     </AuthContext.Provider>
   );
