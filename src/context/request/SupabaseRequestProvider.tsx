@@ -16,9 +16,9 @@ export const SupabaseRequestProvider = ({ children }: SupabaseRequestProviderPro
     requests, 
     loading, 
     fetchRequests, 
-    createRequest as createSupabaseRequest, 
-    updateRequestStatus as updateSupabaseStatus, 
-    assignRequestToAgent as assignSupabaseRequest 
+    createRequest: createSupabaseRequest, 
+    updateRequestStatus: updateSupabaseStatus, 
+    assignRequestToAgent: assignSupabaseRequest 
   } = useSupabaseRequests();
   
   const { createNotification } = useSupabaseNotifications();
