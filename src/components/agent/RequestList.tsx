@@ -27,16 +27,12 @@ export const RequestList = ({
   return (
     <div className="space-y-4">
       {requests.map((request) => (
-        <div
+        <RequestCard
           key={request.id}
-          onClick={() => onRequestClick(request)}
-          className="cursor-pointer"
-        >
-          <RequestCard
-            request={request}
-            openDetails={() => onRequestClick(request)}
-          />
-        </div>
+          request={request}
+          openDetails={() => onRequestClick(request)}
+          customAction={customAction}
+        />
       ))}
     </div>
   );

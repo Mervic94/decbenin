@@ -69,7 +69,9 @@ export const useAgentDashboard = () => {
     pendingAction,
     messageContent,
     setMessageContent,
-    setIsQuoteRequestModalOpen
+    setIsQuoteRequestModalOpen,
+    user,
+    refreshRequests
   );
 
   return {
