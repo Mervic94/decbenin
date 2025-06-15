@@ -9,9 +9,14 @@ interface AuthContextType {
   profile: Profile | null;
   loading: boolean;
   isAuthenticated: boolean;
+  userRole: UserRole | null;
   signIn: (email: string, password: string) => Promise<boolean>;
   signUp: (email: string, password: string, fullName: string) => Promise<boolean>;
   signOut: () => Promise<boolean>;
+  // Aliases for backward compatibility
+  login: (email: string, password: string) => Promise<boolean>;
+  register: (name: string, email: string, password: string) => Promise<boolean>;
+  logout: () => Promise<boolean>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -31,8 +36,19 @@ interface AuthProviderProps {
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const auth = useSupabaseAuth();
 
+  const contextValue: AuthContextType = {
+    ...auth,
+    userRole: auth.user?.role || null,
+    // Aliases for backward compatibility
+    login: auth.signIn,
+    register: async (name: string, email: string, password: string) => {
+      return await auth.signUp(email, password, name);
+    },
+    logout: auth.signOut,
+  };
+
   return (
-    <AuthContext.Provider value={auth}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

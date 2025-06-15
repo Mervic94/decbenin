@@ -16,11 +16,13 @@ export interface Address {
   country: string;
 }
 
+export type RequestStatus = "pending" | "approved" | "declined" | "completed";
+
 export interface MoveRequest {
   id: string;
   user_id: string;
   agent_id?: string | null;
-  status: "pending" | "approved" | "declined" | "completed";
+  status: RequestStatus;
   created_at?: string;
   updated_at?: string;
   pickupAddress: Address;
@@ -34,12 +36,10 @@ export interface MoveRequest {
   approved_by?: string;
 }
 
-export type RequestStatus = "pending" | "approved" | "declined" | "completed";
-
 export interface Message {
   id: string;
   request_id: string;
-  user_id: string; // Adding this required property
+  user_id: string;
   sender_id?: string;
   recipient_id?: string;
   content: string;
@@ -54,14 +54,14 @@ export interface Message {
 export interface Notification {
   id: string;
   user_id: string;
-  message: string; // Adding this required property
+  message: string;
   created_at: string;
   read: boolean;
   // Add the missing properties that are being used in the codebase
   title?: string;
   content?: string;
   type?: string;
-  reference_id?: string; // Adding this property used in Messages.tsx
+  reference_id?: string;
 }
 
 // Define QuoteRequest interface for the profile page

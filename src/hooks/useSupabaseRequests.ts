@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { MoveRequest, Address } from '@/types';
+import { MoveRequest, Address, RequestStatus } from '@/types';
 import { toast } from 'sonner';
 
 export const useSupabaseRequests = () => {
@@ -19,12 +19,20 @@ export const useSupabaseRequests = () => {
 
       if (error) throw error;
       
-      const formattedData: MoveRequest[] = data.map(item => ({
-        ...item,
+      const formattedData: MoveRequest[] = (data || []).map(item => ({
+        id: item.id,
+        user_id: item.user_id,
+        agent_id: item.agent_id,
+        status: item.status as RequestStatus,
         pickupAddress: item.pickup_address as Address,
         deliveryAddress: item.delivery_address as Address,
         moveDate: item.move_date,
-        items: item.items || []
+        description: item.description || '',
+        items: item.items || [],
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        assigned_at: item.assigned_at,
+        approved_by: item.approved_by
       }));
       
       setRequests(formattedData);
@@ -76,7 +84,7 @@ export const useSupabaseRequests = () => {
   };
 
   // Mettre à jour le statut d'une demande
-  const updateRequestStatus = async (requestId: string, status: string): Promise<boolean> => {
+  const updateRequestStatus = async (requestId: string, status: RequestStatus): Promise<boolean> => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return false;

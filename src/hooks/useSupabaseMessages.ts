@@ -15,14 +15,44 @@ export const useSupabaseMessages = () => {
       const { data, error } = await supabase
         .from('messages')
         .select(`
-          *,
-          profiles!sender_id(full_name)
+          id,
+          request_id,
+          user_id,
+          sender_id,
+          recipient_id,
+          content,
+          created_at,
+          read,
+          is_system
         `)
         .eq('request_id', requestId)
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setMessages(data || []);
+      
+      // Fetch sender profiles separately
+      const messagesWithProfiles: Message[] = [];
+      
+      for (const message of data || []) {
+        let profiles = null;
+        
+        if (message.sender_id) {
+          const { data: profileData } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', message.sender_id)
+            .single();
+          
+          profiles = profileData;
+        }
+        
+        messagesWithProfiles.push({
+          ...message,
+          profiles
+        });
+      }
+      
+      setMessages(messagesWithProfiles);
     } catch (error) {
       console.error('Error fetching messages:', error);
       toast.error('Erreur lors du chargement des messages');
