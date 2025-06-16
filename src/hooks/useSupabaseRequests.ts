@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { MoveRequest, Address, RequestStatus } from '@/types';
@@ -61,7 +60,7 @@ export const useSupabaseRequests = () => {
 
       const { error } = await supabase
         .from('move_requests')
-        .insert({
+        .insert([{
           user_id: user.id,
           pickup_address: pickupAddress,
           delivery_address: deliveryAddress,
@@ -69,7 +68,7 @@ export const useSupabaseRequests = () => {
           description,
           items,
           status: 'pending'
-        });
+        }]);
 
       if (error) throw error;
       
