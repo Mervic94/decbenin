@@ -1,9 +1,9 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { Card, CardProps } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 
-interface AnimatedCardProps extends CardProps {
+interface AnimatedCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
   animation?: 'fadeIn' | 'slideUp' | 'scale' | 'hover';
   delay?: number;

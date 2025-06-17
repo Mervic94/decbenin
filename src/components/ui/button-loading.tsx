@@ -17,8 +17,23 @@ export const ButtonLoading = ({
   icon,
   disabled,
   className,
+  asChild,
   ...props
 }: ButtonLoadingProps) => {
+  // If asChild is true, we need to handle it differently to avoid React.Children.only error
+  if (asChild && !loading) {
+    return (
+      <Button
+        asChild
+        disabled={disabled || loading}
+        className={cn('btn-smooth', className)}
+        {...props}
+      >
+        {children}
+      </Button>
+    );
+  }
+
   return (
     <Button
       disabled={disabled || loading}
