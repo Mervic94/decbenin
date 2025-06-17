@@ -102,3 +102,92 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Nouvelles animations personnalisées */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200px 0;
+  }
+  100% {
+    background-position: calc(200px + 100%) 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.5s ease-out forwards;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite linear;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200px 100%;
+}
+
+/* Améliorations des transitions pour les boutons */
+.btn-smooth {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+.btn-smooth:hover {
+  @apply transform scale-105 shadow-lg;
+}
+
+.btn-smooth:active {
+  @apply transform scale-95;
+}
+
+/* Animations pour les formulaires */
+.form-floating-label {
+  @apply relative;
+}
+
+.form-floating-label input:focus + label,
+.form-floating-label input:not(:placeholder-shown) + label {
+  @apply transform -translate-y-6 scale-75 text-primary;
+}
+
+/* Skeleton loading animation */
+.skeleton {
+  @apply animate-shimmer bg-gray-200 rounded;
+}
