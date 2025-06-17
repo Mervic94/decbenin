@@ -1,58 +1,39 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { MoveRequest, Address, RequestStatus } from '@/types';
-import { toast } from 'sonner';
 
 export const useSupabaseRequests = () => {
   const [requests, setRequests] = useState<MoveRequest[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Récupérer toutes les demandes
-  const fetchRequests = async () => {
-    setLoading(true);
+  const fetchRequests = useCallback(async () => {
     try {
+      setLoading(true);
       console.log('Fetching requests from Supabase...');
+      
+      // Utilisation des nouveaux index pour des requêtes optimisées
       const { data, error } = await supabase
         .from('move_requests')
         .select('*')
         .order('created_at', { ascending: false });
 
       if (error) {
-        console.error('Supabase error fetching requests:', error);
+        console.error('Error fetching requests:', error);
         throw error;
       }
-      
-      console.log('Raw data from Supabase:', data);
-      
-      const formattedData: MoveRequest[] = (data || []).map(item => ({
-        id: item.id,
-        user_id: item.user_id,
-        agent_id: item.agent_id,
-        status: item.status as RequestStatus,
-        pickupAddress: item.pickup_address as unknown as Address,
-        deliveryAddress: item.delivery_address as unknown as Address,
-        moveDate: item.move_date,
-        description: item.description || '',
-        items: item.items || [],
-        created_at: item.created_at,
-        updated_at: item.updated_at,
-        assigned_at: item.assigned_at,
-        approved_by: item.approved_by
-      }));
-      
-      console.log('Formatted requests:', formattedData);
-      setRequests(formattedData);
-    } catch (error: any) {
-      console.error('Error fetching requests:', error);
-      toast.error('Erreur lors du chargement des demandes: ' + (error.message || 'Erreur inconnue'));
+
+      console.log('Requests fetched successfully:', data?.length || 0);
+      setRequests(data || []);
+    } catch (error) {
+      console.error('Error in fetchRequests:', error);
+      throw error;
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Créer une nouvelle demande
-  const createRequest = async (
+  const createRequest = useCallback(async (
     pickupAddress: Address,
     deliveryAddress: Address,
     moveDate: Date,
@@ -60,148 +41,120 @@ export const useSupabaseRequests = () => {
     items: string[]
   ): Promise<boolean> => {
     try {
-      console.log('Creating new request...');
+      console.log('Creating request in Supabase...', { pickupAddress, deliveryAddress, moveDate, description, items });
+      
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         console.error('No authenticated user found');
-        toast.error('Vous devez être connecté pour créer une demande');
         return false;
       }
 
-      console.log('Authenticated user:', user.id);
-      console.log('Request data:', { pickupAddress, deliveryAddress, moveDate, description, items });
+      const requestData = {
+        user_id: user.id,
+        pickup_address: pickupAddress,
+        delivery_address: deliveryAddress,
+        move_date: moveDate.toISOString().split('T')[0],
+        description,
+        items,
+        status: 'pending' as RequestStatus
+      };
 
       const { data, error } = await supabase
         .from('move_requests')
-        .insert({
-          user_id: user.id,
-          pickup_address: pickupAddress as any,
-          delivery_address: deliveryAddress as any,
-          move_date: moveDate.toISOString().split('T')[0],
-          description,
-          items,
-          status: 'pending'
-        })
+        .insert([requestData])
         .select()
         .single();
 
       if (error) {
-        console.error('Supabase error creating request:', error);
-        throw error;
-      }
-      
-      console.log('Request created successfully:', data);
-      toast.success('Demande créée avec succès');
-      await fetchRequests();
-      return true;
-    } catch (error: any) {
-      console.error('Error creating request:', error);
-      toast.error('Erreur lors de la création de la demande: ' + (error.message || 'Erreur inconnue'));
-      return false;
-    }
-  };
-
-  // Mettre à jour le statut d'une demande
-  const updateRequestStatus = async (requestId: string, status: RequestStatus): Promise<boolean> => {
-    try {
-      console.log('Updating request status:', { requestId, status });
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        console.error('No authenticated user found');
+        console.error('Error creating request:', error);
         return false;
       }
 
-      const { data, error } = await supabase
+      console.log('Request created successfully:', data);
+      
+      // Ajouter la nouvelle demande à la liste locale pour une mise à jour immédiate
+      setRequests(prev => [data, ...prev]);
+      
+      return true;
+    } catch (error) {
+      console.error('Error in createRequest:', error);
+      return false;
+    }
+  }, []);
+
+  const updateRequestStatus = useCallback(async (requestId: string, status: RequestStatus): Promise<boolean> => {
+    try {
+      console.log('Updating request status in Supabase...', { requestId, status });
+      
+      const { error } = await supabase
         .from('move_requests')
         .update({ 
           status,
-          ...(status === 'approved' ? { approved_by: user.id } : {})
+          updated_at: new Date().toISOString()
         })
-        .eq('id', requestId)
-        .select()
-        .single();
+        .eq('id', requestId);
 
       if (error) {
-        console.error('Supabase error updating request status:', error);
-        throw error;
+        console.error('Error updating request status:', error);
+        return false;
       }
+
+      console.log('Request status updated successfully');
       
-      console.log('Request status updated successfully:', data);
-      toast.success(`Demande ${status === 'approved' ? 'approuvée' : status === 'declined' ? 'refusée' : 'mise à jour'} avec succès`);
-      await fetchRequests();
+      // Mettre à jour la liste locale
+      setRequests(prev => prev.map(request => 
+        request.id === requestId 
+          ? { ...request, status, updated_at: new Date().toISOString() }
+          : request
+      ));
+      
       return true;
-    } catch (error: any) {
-      console.error('Error updating request status:', error);
-      toast.error('Erreur lors de la mise à jour du statut: ' + (error.message || 'Erreur inconnue'));
+    } catch (error) {
+      console.error('Error in updateRequestStatus:', error);
       return false;
     }
-  };
+  }, []);
 
-  // Assigner une demande à un agent
-  const assignRequestToAgent = async (requestId: string, agentId?: string): Promise<boolean> => {
+  const assignRequestToAgent = useCallback(async (requestId: string, agentId?: string): Promise<boolean> => {
     try {
-      console.log('Assigning request to agent:', { requestId, agentId });
+      console.log('Assigning request to agent in Supabase...', { requestId, agentId });
+      
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         console.error('No authenticated user found');
         return false;
       }
 
-      const targetAgentId = agentId || user.id;
-      console.log('Target agent ID:', targetAgentId);
+      const updateData = {
+        agent_id: agentId || user.id,
+        updated_at: new Date().toISOString(),
+        assigned_at: new Date().toISOString()
+      };
 
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('move_requests')
-        .update({ 
-          agent_id: targetAgentId,
-          status: 'approved',
-          assigned_at: new Date().toISOString()
-        })
-        .eq('id', requestId)
-        .select()
-        .single();
+        .update(updateData)
+        .eq('id', requestId);
 
       if (error) {
-        console.error('Supabase error assigning request:', error);
-        throw error;
+        console.error('Error assigning request to agent:', error);
+        return false;
       }
+
+      console.log('Request assigned to agent successfully');
       
-      console.log('Request assigned successfully:', data);
-      toast.success('Demande assignée avec succès');
-      await fetchRequests();
+      // Mettre à jour la liste locale
+      setRequests(prev => prev.map(request => 
+        request.id === requestId 
+          ? { ...request, ...updateData }
+          : request
+      ));
+      
       return true;
-    } catch (error: any) {
-      console.error('Error assigning request:', error);
-      toast.error('Erreur lors de l\'assignation: ' + (error.message || 'Erreur inconnue'));
+    } catch (error) {
+      console.error('Error in assignRequestToAgent:', error);
       return false;
     }
-  };
-
-  useEffect(() => {
-    fetchRequests();
-
-    // Écouter les changements en temps réel
-    console.log('Setting up real-time subscription...');
-    const channel = supabase
-      .channel('move_requests_changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'move_requests'
-        },
-        (payload) => {
-          console.log('Real-time change received:', payload);
-          fetchRequests();
-        }
-      )
-      .subscribe();
-
-    return () => {
-      console.log('Cleaning up real-time subscription...');
-      supabase.removeChannel(channel);
-    };
   }, []);
 
   return {

@@ -199,16 +199,35 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      dashboard_stats: {
+        Row: {
+          active_agents: number | null
+          approved_requests: number | null
+          completed_requests: number | null
+          declined_requests: number | null
+          last_updated: string | null
+          pending_requests: number | null
+          total_users: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       get_user_role: {
         Args: { user_uuid: string }
         Returns: string
       }
+      get_user_role_cached: {
+        Args: { user_uuid: string }
+        Returns: string
+      }
       is_agent_or_admin: {
         Args: { user_uuid: string }
         Returns: boolean
+      }
+      refresh_dashboard_stats: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
       }
     }
     Enums: {
