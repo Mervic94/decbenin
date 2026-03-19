@@ -57,8 +57,8 @@ export const useSupabaseRequests = () => {
 
       const requestData = {
         user_id: user.id,
-        pickup_address: pickupAddress,
-        delivery_address: deliveryAddress,
+        pickup_address: pickupAddress as unknown as Record<string, unknown>,
+        delivery_address: deliveryAddress as unknown as Record<string, unknown>,
         move_date: moveDate.toISOString().split('T')[0],
         description,
         items,
@@ -78,8 +78,13 @@ export const useSupabaseRequests = () => {
 
       console.log('Request created successfully:', data);
       
-      // Ajouter la nouvelle demande à la liste locale pour une mise à jour immédiate
-      setRequests(prev => [data, ...prev]);
+      const mapped: MoveRequest = {
+        ...data,
+        pickupAddress: data.pickup_address as unknown as Address,
+        deliveryAddress: data.delivery_address as unknown as Address,
+        moveDate: data.move_date,
+      };
+      setRequests(prev => [mapped, ...prev]);
       
       return true;
     } catch (error) {
