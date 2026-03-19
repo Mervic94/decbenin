@@ -81,8 +81,8 @@ const AdminTracking = () => {
 
       const mapped: TrackingItem[] = (requests || []).map(r => ({
         id: r.id,
-        client_name: profileMap.get(r.user_id) || "Client inconnu",
-        agent_name: r.agent_id ? (profileMap.get(r.agent_id) || "Agent inconnu") : null,
+        client_name: profileLookup[r.user_id] || "Client inconnu",
+        agent_name: r.agent_id ? (profileLookup[r.agent_id] || "Agent inconnu") : null,
         pickup_address: r.pickup_address as unknown as Address,
         delivery_address: r.delivery_address as unknown as Address,
         status: r.status,
