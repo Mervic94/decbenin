@@ -24,6 +24,10 @@ import OrganiserDemenagement from "./pages/OrganiserDemenagement";
 import ChecklistDemenagement from "./pages/ChecklistDemenagement";
 import CookiesPolicy from "./pages/CookiesPolicy";
 import NotFound from "./pages/NotFound";
+import AdminUsers from "./pages/AdminUsers";
+import AdminReports from "./pages/AdminReports";
+import AdminTracking from "./pages/AdminTracking";
+import AdminSettings from "./pages/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -112,6 +116,12 @@ function App() {
                       </ProtectedRoute>
                     }
                   />
+                  
+                  {/* Admin Sub-Routes */}
+                  <Route path="/admin/users" element={<ProtectedRoute requiredRole="admin"><AdminUsers /></ProtectedRoute>} />
+                  <Route path="/admin/reports" element={<ProtectedRoute requiredRole="admin"><AdminReports /></ProtectedRoute>} />
+                  <Route path="/admin/tracking" element={<ProtectedRoute requiredRole="admin"><AdminTracking /></ProtectedRoute>} />
+                  <Route path="/admin/settings" element={<ProtectedRoute requiredRole="admin"><AdminSettings /></ProtectedRoute>} />
                   
                   {/* 404 Route */}
                   <Route path="*" element={<NotFound />} />
