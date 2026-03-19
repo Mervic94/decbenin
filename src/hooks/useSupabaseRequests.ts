@@ -24,7 +24,13 @@ export const useSupabaseRequests = () => {
       }
 
       console.log('Requests fetched successfully:', data?.length || 0);
-      setRequests(data || []);
+      const mapped = (data || []).map((row: any) => ({
+        ...row,
+        pickupAddress: row.pickup_address as Address,
+        deliveryAddress: row.delivery_address as Address,
+        moveDate: row.move_date,
+      })) as MoveRequest[];
+      setRequests(mapped);
     } catch (error) {
       console.error('Error in fetchRequests:', error);
       throw error;
@@ -51,12 +57,12 @@ export const useSupabaseRequests = () => {
 
       const requestData = {
         user_id: user.id,
-        pickup_address: pickupAddress,
-        delivery_address: deliveryAddress,
+        pickup_address: JSON.parse(JSON.stringify(pickupAddress)),
+        delivery_address: JSON.parse(JSON.stringify(deliveryAddress)),
         move_date: moveDate.toISOString().split('T')[0],
         description,
         items,
-        status: 'pending' as RequestStatus
+        status: 'pending'
       };
 
       const { data, error } = await supabase
@@ -72,8 +78,14 @@ export const useSupabaseRequests = () => {
 
       console.log('Request created successfully:', data);
       
-      // Ajouter la nouvelle demande à la liste locale pour une mise à jour immédiate
-      setRequests(prev => [data, ...prev]);
+      const mapped = {
+        ...data,
+        status: data.status as RequestStatus,
+        pickupAddress: data.pickup_address as unknown as Address,
+        deliveryAddress: data.delivery_address as unknown as Address,
+        moveDate: data.move_date,
+      };
+      setRequests(prev => [mapped, ...prev]);
       
       return true;
     } catch (error) {

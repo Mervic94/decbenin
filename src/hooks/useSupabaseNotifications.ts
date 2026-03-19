@@ -162,14 +162,15 @@ export const useSupabaseNotifications = () => {
 
   // Écouter les nouvelles notifications en temps réel
   useEffect(() => {
-    const { data: { user } } = supabase.auth.getUser();
-    
-    user.then(({ user: currentUser }) => {
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
+    const setupListener = async () => {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
       if (!currentUser) return;
 
       console.log('Setting up real-time notifications listener...');
       
-      const channel = supabase
+      channel = supabase
         .channel('notifications')
         .on(
           'postgres_changes',
@@ -187,12 +188,16 @@ export const useSupabaseNotifications = () => {
           }
         )
         .subscribe();
+    };
 
-      return () => {
+    setupListener();
+
+    return () => {
+      if (channel) {
         console.log('Cleaning up notifications listener...');
         supabase.removeChannel(channel);
-      };
-    });
+      }
+    };
   }, []);
 
   return {
