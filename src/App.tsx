@@ -117,6 +117,12 @@ function App() {
                     }
                   />
                   
+                  {/* Admin Sub-Routes */}
+                  <Route path="/admin/users" element={<ProtectedRoute requiredRole="admin"><AdminUsers /></ProtectedRoute>} />
+                  <Route path="/admin/reports" element={<ProtectedRoute requiredRole="admin"><AdminReports /></ProtectedRoute>} />
+                  <Route path="/admin/tracking" element={<ProtectedRoute requiredRole="admin"><AdminTracking /></ProtectedRoute>} />
+                  <Route path="/admin/settings" element={<ProtectedRoute requiredRole="admin"><AdminSettings /></ProtectedRoute>} />
+                  
                   {/* 404 Route */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
