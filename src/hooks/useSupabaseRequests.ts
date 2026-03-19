@@ -78,8 +78,9 @@ export const useSupabaseRequests = () => {
 
       console.log('Request created successfully:', data);
       
-      const mapped: MoveRequest = {
+      const mapped = {
         ...data,
+        status: data.status as RequestStatus,
         pickupAddress: data.pickup_address as unknown as Address,
         deliveryAddress: data.delivery_address as unknown as Address,
         moveDate: data.move_date,
