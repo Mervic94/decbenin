@@ -57,12 +57,12 @@ export const useSupabaseRequests = () => {
 
       const requestData = {
         user_id: user.id,
-        pickup_address: pickupAddress as unknown as Record<string, unknown>,
-        delivery_address: deliveryAddress as unknown as Record<string, unknown>,
+        pickup_address: JSON.parse(JSON.stringify(pickupAddress)),
+        delivery_address: JSON.parse(JSON.stringify(deliveryAddress)),
         move_date: moveDate.toISOString().split('T')[0],
         description,
         items,
-        status: 'pending' as RequestStatus
+        status: 'pending'
       };
 
       const { data, error } = await supabase
