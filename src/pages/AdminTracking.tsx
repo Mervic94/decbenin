@@ -76,8 +76,8 @@ const AdminTracking = () => {
         .select("id, full_name")
         .in("id", Array.from(userIds));
 
-      const profileMap = new Map();
-      profiles?.forEach(p => profileMap.set(p.id, p.full_name || "Sans nom"));
+      const profileLookup: Record<string, string> = {};
+      profiles?.forEach(p => { profileLookup[p.id] = p.full_name || "Sans nom"; });
 
       const mapped: TrackingItem[] = (requests || []).map(r => ({
         id: r.id,
