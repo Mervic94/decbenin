@@ -105,6 +105,20 @@ const AdminTracking = () => {
     fetchData();
   }, [fetchData]);
 
+  // Realtime subscription for move_requests
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-tracking-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "move_requests" }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchData]);
+
   const filtered = items.filter(i => statusFilter === "all" || i.status === statusFilter);
   const activeItems = items.filter(i => i.status !== "declined" && i.status !== "completed");
 
