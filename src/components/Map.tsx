@@ -1,8 +1,16 @@
 
-import React, { useEffect, useRef, useState } from 'react';
-import mapboxgl from 'mapbox-gl';
-import 'mapbox-gl/dist/mapbox-gl.css';
+import React, { useEffect, useRef } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import { MapIcon } from 'lucide-react';
+
+// Fix default marker icons for Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+});
 
 interface MapProps {
   latitude?: number;
@@ -10,79 +18,30 @@ interface MapProps {
   height?: string;
 }
 
-const Map = ({ 
-  latitude = 6.3702928, // Default coordinates for Cotonou
+const Map = ({
+  latitude = 6.3702928,
   longitude = 2.3912362,
   height = "300px"
 }: MapProps) => {
   const mapContainer = useRef<HTMLDivElement>(null);
-  const map = useRef<mapboxgl.Map | null>(null);
-  const [mapError, setMapError] = useState<string | null>(null);
+  const map = useRef<L.Map | null>(null);
 
   useEffect(() => {
-    if (!mapContainer.current) return;
+    if (!mapContainer.current || map.current) return;
 
-    try {
-      // Check if WebGL is supported
-      const canvas = document.createElement('canvas');
-      const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-      
-      if (!gl) {
-        setMapError('WebGL is not supported in your browser');
-        return;
-      }
+    map.current = L.map(mapContainer.current).setView([latitude, longitude], 15);
 
-      // Initialize map
-      mapboxgl.accessToken = 'pk.eyJ1IjoibG92YWJsZSIsImEiOiJjbHR3bjNtcm0wMTRqMmptbGFpdnJ3OWR2In0.Zb3J4JTqolqQnZJJVgXqbg';
-      
-      const mapInstance = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: 'mapbox://styles/mapbox/streets-v11',
-        center: [longitude, latitude],
-        zoom: 15,
-        failIfMajorPerformanceCaveat: false, // Allow fallback rendering
-      });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map.current);
 
-      mapInstance.on('error', (e) => {
-        console.error('Mapbox error:', e);
-        setMapError('Failed to load map');
-      });
+    L.marker([latitude, longitude]).addTo(map.current);
 
-      // Add marker when the map is loaded
-      mapInstance.on('load', () => {
-        new mapboxgl.Marker()
-          .setLngLat([longitude, latitude])
-          .addTo(mapInstance);
-      });
-
-      // Add navigation controls
-      mapInstance.addControl(new mapboxgl.NavigationControl(), 'top-right');
-
-      map.current = mapInstance;
-
-      // Cleanup
-      return () => {
-        map.current?.remove();
-      };
-    } catch (error) {
-      console.error("Map initialization error:", error);
-      setMapError('Failed to initialize map');
-    }
+    return () => {
+      map.current?.remove();
+      map.current = null;
+    };
   }, [latitude, longitude]);
-
-  // Fallback content when map fails to load
-  if (mapError) {
-    return (
-      <div 
-        style={{ height }} 
-        className="w-full rounded-lg overflow-hidden bg-gray-100 flex flex-col items-center justify-center text-gray-500"
-      >
-        <MapIcon size={36} />
-        <p className="mt-2">Map not available</p>
-        <p className="text-sm mt-1">Coordinates: {latitude}, {longitude}</p>
-      </div>
-    );
-  }
 
   return (
     <div style={{ height }} className="w-full rounded-lg overflow-hidden">
