@@ -114,6 +114,23 @@ const AdminReports = () => {
     fetchData();
   }, [fetchData]);
 
+  // Realtime subscription for stats refresh
+  useEffect(() => {
+    const channel = supabase
+      .channel("admin-reports-realtime")
+      .on("postgres_changes", { event: "*", schema: "public", table: "move_requests" }, () => {
+        fetchData();
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "profiles" }, () => {
+        fetchData();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [fetchData]);
+
   const totalRequests = stats ? stats.pending_requests + stats.approved_requests + stats.completed_requests + stats.declined_requests : 0;
   const completionRate = totalRequests > 0 ? Math.round(((stats?.completed_requests || 0) + (stats?.approved_requests || 0)) / totalRequests * 100) : 0;
 
