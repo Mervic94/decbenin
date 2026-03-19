@@ -24,7 +24,13 @@ export const useSupabaseRequests = () => {
       }
 
       console.log('Requests fetched successfully:', data?.length || 0);
-      setRequests(data || []);
+      const mapped = (data || []).map((row: any) => ({
+        ...row,
+        pickupAddress: row.pickup_address as Address,
+        deliveryAddress: row.delivery_address as Address,
+        moveDate: row.move_date,
+      })) as MoveRequest[];
+      setRequests(mapped);
     } catch (error) {
       console.error('Error in fetchRequests:', error);
       throw error;
