@@ -24,6 +24,10 @@ import OrganiserDemenagement from "./pages/OrganiserDemenagement";
 import ChecklistDemenagement from "./pages/ChecklistDemenagement";
 import CookiesPolicy from "./pages/CookiesPolicy";
 import NotFound from "./pages/NotFound";
+import AdminUsers from "./pages/AdminUsers";
+import AdminReports from "./pages/AdminReports";
+import AdminTracking from "./pages/AdminTracking";
+import AdminSettings from "./pages/AdminSettings";
 
 const queryClient = new QueryClient();
 
