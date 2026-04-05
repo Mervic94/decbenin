@@ -6,7 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { SupabaseRequestProvider } from "@/context/request/SupabaseRequestProvider";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
-import { Layout } from "@/components/Layout";
+
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -38,7 +38,6 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <SupabaseRequestProvider>
-              <Layout>
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
@@ -126,7 +125,6 @@ function App() {
                   {/* 404 Route */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </Layout>
               <Toaster />
             </SupabaseRequestProvider>
           </AuthProvider>

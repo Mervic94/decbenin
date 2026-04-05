@@ -1,5 +1,5 @@
 
-import { PageContainer } from "@/components/Layout";
+import { Layout, PageContainer } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,6 +36,7 @@ const AdminSettings = () => {
   };
 
   return (
+    <Layout>
     <PageContainer>
       <div className="max-w-4xl mx-auto py-4">
         <div className="flex items-center justify-between mb-6">
@@ -196,6 +197,7 @@ const AdminSettings = () => {
         </Tabs>
       </div>
     </PageContainer>
+    </Layout>
   );
 };
 

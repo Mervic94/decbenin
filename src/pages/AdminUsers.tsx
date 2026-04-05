@@ -1,5 +1,5 @@
 
-import { PageContainer } from "@/components/Layout";
+import { Layout, PageContainer } from "@/components/Layout";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -210,6 +210,7 @@ const AdminUsers = () => {
   );
 
   return (
+    <Layout>
     <PageContainer>
       <div className="max-w-6xl mx-auto py-4">
         <div className="flex items-center justify-between mb-6">
@@ -363,6 +364,7 @@ const AdminUsers = () => {
         </Dialog>
       </div>
     </PageContainer>
+    </Layout>
   );
 };
 
