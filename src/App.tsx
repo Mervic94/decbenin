@@ -38,7 +38,6 @@ function App() {
         <BrowserRouter>
           <AuthProvider>
             <SupabaseRequestProvider>
-              <Layout>
                 <Routes>
                   <Route path="/" element={<Index />} />
                   <Route path="/login" element={<Login />} />
@@ -126,7 +125,6 @@ function App() {
                   {/* 404 Route */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </Layout>
               <Toaster />
             </SupabaseRequestProvider>
           </AuthProvider>
