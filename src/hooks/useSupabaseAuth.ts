@@ -205,9 +205,24 @@ export const useSupabaseAuth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Vérifier la session initiale
+  // Vérifier la session initiale (y compris démo)
   useEffect(() => {
     const getInitialSession = async () => {
+      // Check for demo user first
+      const demoData = localStorage.getItem(DEMO_USER_KEY);
+      if (demoData) {
+        try {
+          const { email, role } = JSON.parse(demoData);
+          const config = DEMO_ACCOUNTS[email];
+          if (config) {
+            setUser(createDemoUser(email, config));
+            setProfile(createDemoProfile(email, config));
+            setLoading(false);
+            return;
+          }
+        } catch {}
+      }
+
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
