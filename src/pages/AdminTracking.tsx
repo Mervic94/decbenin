@@ -1,5 +1,5 @@
 
-import { PageContainer } from "@/components/Layout";
+import { Layout, PageContainer } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -140,6 +140,7 @@ const AdminTracking = () => {
     : { lat: 6.3702928, lng: 2.3912362 };
 
   return (
+    <Layout>
     <PageContainer>
       <div className="max-w-6xl mx-auto py-4">
         <div className="flex items-center justify-between mb-6">
@@ -334,6 +335,7 @@ const AdminTracking = () => {
         </Dialog>
       </div>
     </PageContainer>
+    </Layout>
   );
 };
 

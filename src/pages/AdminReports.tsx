@@ -1,5 +1,5 @@
 
-import { PageContainer } from "@/components/Layout";
+import { Layout, PageContainer } from "@/components/Layout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, TrendingUp, Users, FileText, Truck, Download, RefreshCw } from "lucide-react";
@@ -198,6 +198,7 @@ const AdminReports = () => {
   };
 
   return (
+    <Layout>
     <PageContainer>
       <div className="max-w-6xl mx-auto py-4">
         <div className="flex items-center justify-between mb-6">
@@ -301,6 +302,7 @@ const AdminReports = () => {
         )}
       </div>
     </PageContainer>
+    </Layout>
   );
 };
 
