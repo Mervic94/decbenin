@@ -8,11 +8,16 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { ProfileDetails } from "@/components/profile/ProfileDetails";
 import { QuoteHistoryCard } from "@/components/profile/QuoteHistoryCard";
+import { TaskAssignmentPanel } from "@/components/profile/TaskAssignmentPanel";
+import { FeatureLockPanel } from "@/components/profile/FeatureLockPanel";
+import { AdminWorkViewer } from "@/components/profile/AdminWorkViewer";
 import { useToast } from "@/hooks/use-toast";
 import { QuoteRequest } from "@/types";
 import Map from "@/components/Map";
+import { Shield, Users, ClipboardList, Lock, Eye, MapPin } from "lucide-react";
 
 const Profile = () => {
   const { user, profile, userRole } = useAuth();
@@ -22,34 +27,23 @@ const Profile = () => {
   const [fullName, setFullName] = useState(profile?.full_name || "");
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url || "");
   const [isLoading, setIsLoading] = useState(false);
-  
-  // Quote history state
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredQuotes, setFilteredQuotes] = useState<QuoteRequest[]>([]);
   const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
   const [quoteHistoryLoading, setQuoteHistoryLoading] = useState(false);
 
-  // Mock quote data for all users
   const mockQuotes: QuoteRequest[] = [
     {
-      id: "1",
-      reference: "REF-20240501",
-      created_at: "2024-05-01T10:00:00Z",
-      move_date: "2024-06-15T00:00:00Z",
-      status: "pending",
-      volume: 35,
+      id: "1", reference: "REF-20240501", created_at: "2024-05-01T10:00:00Z",
+      move_date: "2024-06-15T00:00:00Z", status: "pending", volume: 35,
       pickup_address: "123 Rue du Commerce, Cotonou",
       delivery_address: "456 Avenue des Arts, Cotonou",
       pickup_coordinates: { latitude: 6.3702, longitude: 2.3912 },
       delivery_coordinates: { latitude: 6.3802, longitude: 2.4012 }
     },
     {
-      id: "2",
-      reference: "REF-20240420",
-      created_at: "2024-04-20T14:30:00Z",
-      move_date: "2024-05-30T00:00:00Z",
-      status: "completed",
-      volume: 20,
+      id: "2", reference: "REF-20240420", created_at: "2024-04-20T14:30:00Z",
+      move_date: "2024-05-30T00:00:00Z", status: "completed", volume: 20,
       pickup_address: "789 Avenue des Palmiers, Cotonou",
       delivery_address: "101 Boulevard de la Paix, Cotonou",
       pickup_coordinates: { latitude: 6.3602, longitude: 2.3812 },
@@ -57,139 +51,100 @@ const Profile = () => {
     }
   ];
 
-  // Additional quotes for agents
-  const agentMockQuotes: QuoteRequest[] = [
-    {
-      id: "3",
-      reference: "REF-20240515",
-      created_at: "2024-05-15T09:15:00Z",
-      move_date: "2024-07-05T00:00:00Z",
-      status: "pending",
-      volume: 50,
-      pickup_address: "25 Rue des Fleurs, Cotonou",
-      delivery_address: "36 Avenue de l'Indépendance, Cotonou",
-      pickup_coordinates: { latitude: 6.3752, longitude: 2.3852 },
-      delivery_coordinates: { latitude: 6.3812, longitude: 2.4032 }
-    },
-    {
-      id: "4",
-      reference: "REF-20240510",
-      created_at: "2024-05-10T11:20:00Z",
-      move_date: "2024-06-25T00:00:00Z",
-      status: "completed",
-      volume: 15,
-      pickup_address: "87 Boulevard de la Marina, Cotonou",
-      delivery_address: "93 Rue des Ambassades, Cotonou",
-      pickup_coordinates: { latitude: 6.3642, longitude: 2.3762 },
-      delivery_coordinates: { latitude: 6.3922, longitude: 2.4092 }
-    },
-    {
-      id: "5",
-      reference: "REF-20240505",
-      created_at: "2024-05-05T16:45:00Z", 
-      move_date: "2024-06-20T00:00:00Z",
-      status: "pending",
-      volume: 28,
-      pickup_address: "45 Avenue des Cocotiers, Cotonou",
-      delivery_address: "19 Rue du Marché, Cotonou",
-      pickup_coordinates: { latitude: 6.3682, longitude: 2.3842 },
-      delivery_coordinates: { latitude: 6.3862, longitude: 2.4052 }
-    }
-  ];
-
-  // Filter quotes based on search term and role
   useEffect(() => {
-    let quotes = userRole === 'agent' ? [...mockQuotes, ...agentMockQuotes] : mockQuotes;
-    
-    const filtered = quotes.filter(quote => 
+    const filtered = mockQuotes.filter(quote =>
       quote.reference.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.pickup_address.toLowerCase().includes(searchTerm.toLowerCase()) ||
       quote.delivery_address.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredQuotes(filtered);
-  }, [searchTerm, userRole]);
+  }, [searchTerm]);
 
   const handleAvatarChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files || !files[0]) return;
-
-    const file = files[0];
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${user?.id}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-
     setIsLoading(true);
-
     try {
-      // In a real implementation, this would upload to Supabase storage
-      // For now we just simulate with a timeout
       setTimeout(() => {
-        // Create a local URL for the uploaded image
-        const objectUrl = URL.createObjectURL(file);
+        const objectUrl = URL.createObjectURL(files[0]);
         setAvatarUrl(objectUrl);
         setIsLoading(false);
-        
-        toast({
-          title: "Succès",
-          description: "Photo de profil mise à jour avec succès",
-        });
+        toast({ title: "Succès", description: "Photo de profil mise à jour" });
       }, 1000);
     } catch (error) {
-      console.error('Error uploading avatar:', error);
       setIsLoading(false);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la mise à jour de votre photo de profil",
-        variant: "destructive",
-      });
+      toast({ title: "Erreur", description: "Échec de la mise à jour", variant: "destructive" });
     }
   };
 
   const handleSaveProfile = async () => {
     if (!user) return;
-
     setIsLoading(true);
-
-    try {
-      // In a real implementation, this would update the Supabase profile
-      setTimeout(() => {
-        setIsLoading(false);
-        setIsEditing(false);
-        
-        toast({
-          title: "Succès",
-          description: "Profil mis à jour avec succès",
-        });
-      }, 1000);
-    } catch (error) {
-      console.error('Error updating profile:', error);
+    setTimeout(() => {
       setIsLoading(false);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue lors de la mise à jour de votre profil",
-        variant: "destructive",
-      });
+      setIsEditing(false);
+      toast({ title: "Succès", description: "Profil mis à jour" });
+    }, 1000);
+  };
+
+  const getRoleBadge = () => {
+    const roles: Record<string, { label: string; color: string }> = {
+      admin: { label: "Administrateur", color: "bg-red-100 text-red-800" },
+      moderator: { label: "Modérateur", color: "bg-purple-100 text-purple-800" },
+      agent: { label: "Agent", color: "bg-blue-100 text-blue-800" },
+      user: { label: "Client", color: "bg-green-100 text-green-800" },
+    };
+    const role = roles[userRole || "user"];
+    return <Badge className={`${role.color} text-xs`}>{role.label}</Badge>;
+  };
+
+  const getTabs = () => {
+    const tabs = [
+      { value: "profile", label: "Profil", icon: Users },
+      { value: "quotes", label: "Mes Devis", icon: ClipboardList },
+    ];
+
+    if (userRole === "agent") {
+      tabs.push({ value: "map", label: "Ma Zone", icon: MapPin });
     }
+
+    if (userRole === "moderator") {
+      tabs.push({ value: "tasks", label: "Tâches", icon: ClipboardList });
+    }
+
+    if (userRole === "admin") {
+      tabs.push({ value: "tasks", label: "Tâches", icon: ClipboardList });
+      tabs.push({ value: "work", label: "Travaux", icon: Eye });
+      tabs.push({ value: "locks", label: "Verrouillages", icon: Lock });
+    }
+
+    return tabs;
   };
 
   return (
     <Layout>
       <PageContainer>
         <div className="max-w-4xl mx-auto py-8">
-          <h1 className="text-3xl font-bold mb-6">Mon Profil {userRole === 'agent' ? '(Agent)' : ''}</h1>
+          <div className="flex items-center gap-3 mb-6">
+            <h1 className="text-3xl font-bold">Mon Profil</h1>
+            {getRoleBadge()}
+          </div>
 
           <Tabs defaultValue="profile" className="w-full">
-            <TabsList className="mb-6">
-              <TabsTrigger value="profile">Profil</TabsTrigger>
-              <TabsTrigger value="quotes">Mes Devis</TabsTrigger>
-              {userRole === 'agent' && <TabsTrigger value="map">Ma Zone</TabsTrigger>}
+            <TabsList className="mb-6 flex-wrap h-auto">
+              {getTabs().map(tab => (
+                <TabsTrigger key={tab.value} value={tab.value} className="flex items-center gap-1.5">
+                  <tab.icon className="h-4 w-4" />
+                  <span className="hidden sm:inline">{tab.label}</span>
+                </TabsTrigger>
+              ))}
             </TabsList>
 
+            {/* Profile Tab */}
             <TabsContent value="profile">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <Card className="md:col-span-1">
-                  <CardHeader>
-                    <CardTitle>Photo de Profil</CardTitle>
-                  </CardHeader>
+                  <CardHeader><CardTitle>Photo de Profil</CardTitle></CardHeader>
                   <CardContent className="flex flex-col items-center">
                     <Avatar className="w-32 h-32 mb-4">
                       <AvatarImage src={avatarUrl} />
@@ -197,92 +152,44 @@ const Profile = () => {
                         {profile?.full_name?.charAt(0) || user?.email?.charAt(0) || "U"}
                       </AvatarFallback>
                     </Avatar>
-
-                    {isEditing ? (
+                    {isEditing && (
                       <div className="w-full">
-                        <Label htmlFor="avatar" className="mb-2 block">
-                          Changer de photo
-                        </Label>
-                        <Input
-                          id="avatar"
-                          type="file"
-                          accept="image/*"
-                          onChange={handleAvatarChange}
-                          disabled={isLoading}
-                        />
+                        <Label htmlFor="avatar" className="mb-2 block">Changer de photo</Label>
+                        <Input id="avatar" type="file" accept="image/*" onChange={handleAvatarChange} disabled={isLoading} />
                       </div>
-                    ) : null}
+                    )}
                   </CardContent>
                 </Card>
 
                 <Card className="md:col-span-2">
-                  <CardHeader>
-                    <CardTitle>Informations Personnelles</CardTitle>
-                  </CardHeader>
+                  <CardHeader><CardTitle>Informations Personnelles</CardTitle></CardHeader>
                   <CardContent>
                     {isEditing ? (
                       <div className="space-y-4">
                         <div>
                           <Label htmlFor="name">Nom Complet</Label>
-                          <Input
-                            id="name"
-                            value={fullName}
-                            onChange={(e) => setFullName(e.target.value)}
-                            placeholder="Votre nom complet"
-                            disabled={isLoading}
-                          />
+                          <Input id="name" value={fullName} onChange={(e) => setFullName(e.target.value)} disabled={isLoading} />
                         </div>
                         <div>
                           <Label htmlFor="email">Email</Label>
-                          <Input
-                            id="email"
-                            value={user?.email || ""}
-                            disabled
-                            className="bg-gray-100"
-                          />
+                          <Input id="email" value={user?.email || ""} disabled className="bg-muted" />
                         </div>
-                        {userRole === 'agent' && (
-                          <div>
-                            <Label htmlFor="role">Rôle</Label>
-                            <Input
-                              id="role"
-                              value="Agent"
-                              disabled
-                              className="bg-gray-100"
-                            />
-                          </div>
-                        )}
-
+                        <div>
+                          <Label>Rôle</Label>
+                          <Input value={userRole || "user"} disabled className="bg-muted capitalize" />
+                        </div>
                         <div className="flex justify-end space-x-2 pt-4">
-                          <Button 
-                            variant="outline" 
-                            onClick={() => setIsEditing(false)}
-                            disabled={isLoading}
-                          >
-                            Annuler
-                          </Button>
-                          <Button 
-                            onClick={handleSaveProfile}
-                            disabled={isLoading}
-                          >
+                          <Button variant="outline" onClick={() => setIsEditing(false)} disabled={isLoading}>Annuler</Button>
+                          <Button onClick={handleSaveProfile} disabled={isLoading}>
                             {isLoading ? "Enregistrement..." : "Enregistrer"}
                           </Button>
                         </div>
                       </div>
                     ) : (
                       <>
-                        <ProfileDetails
-                          user={user}
-                          profile={profile}
-                          isLoading={isLoading}
-                          setIsLoading={setIsLoading}
-                          fullName={profile?.full_name || ""}
-                          email={user?.email || ""}
-                        />
+                        <ProfileDetails user={user} profile={profile} isLoading={isLoading} setIsLoading={setIsLoading} fullName={profile?.full_name || ""} email={user?.email || ""} />
                         <div className="flex justify-end mt-4">
-                          <Button onClick={() => setIsEditing(true)}>
-                            Modifier le profil
-                          </Button>
+                          <Button onClick={() => setIsEditing(true)}>Modifier le profil</Button>
                         </div>
                       </>
                     )}
@@ -291,8 +198,9 @@ const Profile = () => {
               </div>
             </TabsContent>
 
+            {/* Quotes Tab */}
             <TabsContent value="quotes">
-              <QuoteHistoryCard 
+              <QuoteHistoryCard
                 isLoading={quoteHistoryLoading}
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
@@ -300,48 +208,68 @@ const Profile = () => {
                 selectedQuote={selectedQuote}
                 setSelectedQuote={setSelectedQuote}
               />
-              
               {selectedQuote && (
                 <div className="mt-6">
                   <h3 className="text-xl font-semibold mb-4">Localisation</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <h4 className="font-medium mb-2">Adresse de départ</h4>
-                      <Map 
-                        latitude={selectedQuote.pickup_coordinates.latitude} 
-                        longitude={selectedQuote.pickup_coordinates.longitude}
-                        height="250px"
-                      />
+                      <Map latitude={selectedQuote.pickup_coordinates.latitude} longitude={selectedQuote.pickup_coordinates.longitude} height="250px" />
                     </div>
                     <div>
                       <h4 className="font-medium mb-2">Adresse de livraison</h4>
-                      <Map 
-                        latitude={selectedQuote.delivery_coordinates.latitude} 
-                        longitude={selectedQuote.delivery_coordinates.longitude}
-                        height="250px"
-                      />
+                      <Map latitude={selectedQuote.delivery_coordinates.latitude} longitude={selectedQuote.delivery_coordinates.longitude} height="250px" />
                     </div>
                   </div>
                 </div>
               )}
             </TabsContent>
 
-            {userRole === 'agent' && (
+            {/* Agent Map Tab */}
+            {userRole === "agent" && (
               <TabsContent value="map">
                 <Card>
-                  <CardHeader>
-                    <CardTitle>Ma Zone d'Opération</CardTitle>
-                  </CardHeader>
+                  <CardHeader><CardTitle>Ma Zone d'Opération</CardTitle></CardHeader>
                   <CardContent>
                     <p className="mb-4">Vous êtes affecté à la zone de Cotonou et ses environs.</p>
-                    <Map 
-                      latitude={6.3702928} 
-                      longitude={2.3912362}
-                      height="400px"
-                    />
+                    <Map latitude={6.3702928} longitude={2.3912362} height="400px" />
                   </CardContent>
                 </Card>
               </TabsContent>
+            )}
+
+            {/* Moderator Tasks Tab - assign to agents */}
+            {userRole === "moderator" && (
+              <TabsContent value="tasks">
+                <TaskAssignmentPanel
+                  userId={user?.id || ""}
+                  userRole="moderator"
+                  canAssignTo="agent"
+                />
+              </TabsContent>
+            )}
+
+            {/* Admin Tasks Tab - assign to moderators AND agents */}
+            {userRole === "admin" && (
+              <>
+                <TabsContent value="tasks">
+                  <TaskAssignmentPanel
+                    userId={user?.id || ""}
+                    userRole="admin"
+                    canAssignTo="both"
+                  />
+                </TabsContent>
+
+                {/* Admin Work Viewer - read-only */}
+                <TabsContent value="work">
+                  <AdminWorkViewer />
+                </TabsContent>
+
+                {/* Admin Feature Locks */}
+                <TabsContent value="locks">
+                  <FeatureLockPanel adminId={user?.id || ""} />
+                </TabsContent>
+              </>
             )}
           </Tabs>
         </div>
