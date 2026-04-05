@@ -159,6 +159,16 @@ export const useSupabaseAuth = () => {
   // Déconnexion
   const signOut = async (): Promise<boolean> => {
     try {
+      // Check if demo user
+      const demoData = localStorage.getItem(DEMO_USER_KEY);
+      if (demoData) {
+        localStorage.removeItem(DEMO_USER_KEY);
+        setUser(null);
+        setProfile(null);
+        toast.success('Déconnexion réussie');
+        return true;
+      }
+
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
 
