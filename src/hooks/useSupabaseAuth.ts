@@ -5,6 +5,37 @@ import { User } from '@supabase/supabase-js';
 import { Profile, UserRole } from '@/types';
 import { toast } from 'sonner';
 
+// Demo accounts configuration
+const DEMO_ACCOUNTS: Record<string, { password: string; role: UserRole; fullName: string }> = {
+  'client@moveit.com': { password: 'demopass123', role: 'user', fullName: 'Client Démo' },
+  'agent@moveit.com': { password: 'demopass123', role: 'agent', fullName: 'Agent Démo' },
+  'moderator@moveit.com': { password: 'demopass123', role: 'moderator' as UserRole, fullName: 'Modérateur Démo' },
+  'admin@moveit.com': { password: 'demopass123', role: 'admin', fullName: 'Admin Démo' },
+};
+
+const DEMO_USER_KEY = 'demo_user';
+
+const createDemoUser = (email: string, config: typeof DEMO_ACCOUNTS[string]): User & { role?: UserRole } => ({
+  id: `demo-${config.role}`,
+  email,
+  role: config.role,
+  aud: 'authenticated',
+  created_at: new Date().toISOString(),
+  app_metadata: {},
+  user_metadata: { full_name: config.fullName },
+  identities: [],
+  factors: [],
+} as any);
+
+const createDemoProfile = (email: string, config: typeof DEMO_ACCOUNTS[string]): Profile => ({
+  id: `demo-${config.role}`,
+  full_name: config.fullName,
+  email,
+  phone: '+229 00 000 000',
+  created_at: new Date().toISOString(),
+  updated_at: new Date().toISOString(),
+} as Profile);
+
 export const useSupabaseAuth = () => {
   const [user, setUser] = useState<(User & { role?: UserRole }) | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -13,7 +44,6 @@ export const useSupabaseAuth = () => {
   // Récupérer le profil et le rôle de l'utilisateur
   const fetchUserProfile = async (userId: string) => {
     try {
-      // Récupérer le profil
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
@@ -24,7 +54,6 @@ export const useSupabaseAuth = () => {
         throw profileError;
       }
 
-      // Récupérer le rôle
       const { data: roleData, error: roleError } = await supabase
         .from('user_roles')
         .select('role')
@@ -51,6 +80,18 @@ export const useSupabaseAuth = () => {
   const signIn = async (email: string, password: string): Promise<boolean> => {
     try {
       setLoading(true);
+
+      // Check for demo accounts first
+      const demoConfig = DEMO_ACCOUNTS[email.toLowerCase()];
+      if (demoConfig && password === demoConfig.password) {
+        const demoUser = createDemoUser(email, demoConfig);
+        const demoProfile = createDemoProfile(email, demoConfig);
+        setUser(demoUser);
+        setProfile(demoProfile);
+        localStorage.setItem(DEMO_USER_KEY, JSON.stringify({ email, role: demoConfig.role }));
+        toast.success('Connexion réussie (compte démo)');
+        return true;
+      }
       
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
